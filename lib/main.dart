@@ -143,7 +143,11 @@ class _PortfolioPageState extends State<PortfolioPage> {
                                   label: 'LinkedIn',
                                   url: 'https://www.linkedin.com/in/khyehe/',
                                 ),
-                                
+                                SocialItem(
+                                  icon: FontAwesomeIcons.github,
+                                  label: 'Github',
+                                  url: 'github.com/LoKhyeHe',
+                                ),
                               ],
                             ),
                           ],
