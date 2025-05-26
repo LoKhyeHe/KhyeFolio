@@ -53,8 +53,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
     // glow for images
     final imageShadow = BoxShadow(
       color: Colors.white24,
-      blurRadius: 20,
-      spreadRadius: 4,
+      blurRadius: 40,
+      spreadRadius: 8,
     );
 
     return Scaffold(
@@ -62,7 +62,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
         // Center the content, try also with Align
         child: ConstrainedBox(
           // Constrain the width of the content
-          constraints: const BoxConstraints(maxWidth: 1200),
+          constraints: const BoxConstraints(maxWidth: 1100),
           child: SingleChildScrollView(
             controller: _scroll,
             child: Column(
@@ -105,7 +105,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                                 style: TextStyle(
                                     color: Colors.white70, fontSize: 20)),
                             const SizedBox(height: 8),
-                            const Text('Special Participant',
+                            const Text('Lo Khye He',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 48,
@@ -150,6 +150,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                                 ),
                               ],
                             ),
+                            
                           ],
                         ),
                       ),
@@ -157,7 +158,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                       const SizedBox(width: 32),
 
                       // Profile image
-                    ],
+                    Expanded(flex:1,child: GlowImage(assetPath: 'lib/assets/profile.png', width: 300, height: 300, shadow: imageShadow))],
                   ),
                 ),
                 // ─── ABOUT ME ─────────────────────────────────────
@@ -248,7 +249,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                const ProjectCard(
                imagePath: 'lib/assets/verbasense.png',
                title: 'Verbasense',
-               description: 'Smart backlight that helps students raise their hands',
+               description: 'Smart backlight that helps students raise their hands\nAwarded:\n1. Best Use of AI Award\n2. Most Technically Robust Design\n3. Baby Shark Fund Recipient',
                techLine: 'Python | ESP32 | Flutter | Dart',
                aspectRatio: 16/9,
                reverse: false,

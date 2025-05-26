@@ -155,10 +155,15 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext c) {
-    // same glow you already have:
-    final imageShadow = BoxShadow(
-      color: Colors.white24, blurRadius: 20, spreadRadius: 4,
+    final imageShadow = const BoxShadow(
+      color: Colors.white24,
+      blurRadius: 40,
+      spreadRadius: 8,
     );
+
+    // Only the image alignment toggles:
+    final imageAlignment =
+        reverse ? Alignment.centerRight : Alignment.centerLeft;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
@@ -166,10 +171,11 @@ class ProjectCard extends StatelessWidget {
         textDirection: reverse ? TextDirection.rtl : TextDirection.ltr,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 2/3 : the image
+          // IMAGE (2/3)
           Expanded(
             flex: 2,
-            child: Center(
+            child: Align(
+              alignment: imageAlignment,
               child: SizedBox(
                 height: 300,
                 child: AspectRatio(
@@ -181,10 +187,7 @@ class ProjectCard extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        imagePath,
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.asset(imagePath, fit: BoxFit.cover),
                     ),
                   ),
                 ),
@@ -194,7 +197,7 @@ class ProjectCard extends StatelessWidget {
 
           const SizedBox(width: 16),
 
-          // 1/3 : the text
+          // TEXT (1/3) — unchanged alignment (always left)
           Expanded(
             flex: 1,
             child: SizedBox(
@@ -202,20 +205,21 @@ class ProjectCard extends StatelessWidget {
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start, // always start
                   children: [
-                    Text(title,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold)),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 8),
-                    Text(description,
-                        style: const TextStyle(color: Colors.white70)),
+                    Text(description, style: const TextStyle(color: Colors.white70)),
                     if (techLine.isNotEmpty) ...[
                       const SizedBox(height: 8),
-                      Text(techLine,
-                          style: const TextStyle(color: Colors.white54)),
+                      Text(techLine, style: const TextStyle(color: Colors.white54)),
                     ],
                   ],
                 ),
