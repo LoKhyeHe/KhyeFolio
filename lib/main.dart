@@ -56,9 +56,13 @@ class _PortfolioPageState extends State<PortfolioPage> {
       blurRadius: 40,
       spreadRadius: 8,
     );
+    // detect portrait vs. landscape
+    final isPortrait =
+        MediaQuery.of(context).size.height > MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Center(
+        body: Stack(children: [
+      Center(
         // Center the content, try also with Align
         child: ConstrainedBox(
           // Constrain the width of the content
@@ -150,7 +154,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
                                 ),
                               ],
                             ),
-                            
                           ],
                         ),
                       ),
@@ -158,7 +161,14 @@ class _PortfolioPageState extends State<PortfolioPage> {
                       const SizedBox(width: 32),
 
                       // Profile image
-                    Expanded(flex:1,child: GlowImage(assetPath: 'lib/assets/profile.png', width: 300, height: 300, shadow: imageShadow))],
+                      Expanded(
+                          flex: 1,
+                          child: GlowImage(
+                              assetPath: 'lib/assets/profile.png',
+                              width: 300,
+                              height: 300,
+                              shadow: imageShadow))
+                    ],
                   ),
                 ),
                 // ─── ABOUT ME ─────────────────────────────────────
@@ -243,51 +253,45 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 ),
                 // ─── PROJECTS ────────────────────────────────────────
                 Container(key: _projKey),
-               const SectionHeader('Projects'),
+                const SectionHeader('Projects'),
 
+                const ProjectCard(
+                  imagePath: 'lib/assets/verbasense.png',
+                  title: 'Verbasense',
+                  description:
+                      'Smart backlight that helps students raise their hands\nAwarded:\n1. Best Use of AI Award\n2. Most Technically Robust Design\n3. Baby Shark Fund Recipient',
+                  techLine: 'Python | ESP32 | Flutter | Dart',
+                  aspectRatio: 16 / 9,
+                  reverse: false,
+                ),
 
-               const ProjectCard(
-               imagePath: 'lib/assets/verbasense.png',
-               title: 'Verbasense',
-               description: 'Smart backlight that helps students raise their hands\nAwarded:\n1. Best Use of AI Award\n2. Most Technically Robust Design\n3. Baby Shark Fund Recipient',
-               techLine: 'Python | ESP32 | Flutter | Dart',
-               aspectRatio: 16/9,
-               reverse: false,
-             ),
+                const ProjectCard(
+                  imagePath: 'lib/assets/capacitor.png',
+                  title: 'DIY Capacitor',
+                  description: 'Variable Capacitor Disk Style',
+                  techLine: 'Fusion 360 | Additive Manufacturing',
+                  aspectRatio: 16/9, // square image
+                  reverse: true, // image on right side
+                ),
 
-
-             const ProjectCard(
-               imagePath: 'lib/assets/capacitor.png',
-               title: 'DIY Capacitor',
-               description: 'Variable Capacitor Disk Style',
-               techLine: 'Fusion 360 | Additive Manufacturing',
-               aspectRatio: 1,   // square image
-               reverse: true,    // image on right side
-             ),
-
-
-             const ProjectCard(
-               imagePath: 'lib/assets/icecream.png',
-               title: 'Battle of the Ice Cream Cup',
-               description: 'Lifecycle analysis of different materials.',
-               techLine: '',     // no tech line
-               aspectRatio: 16/9,
-               reverse: false,
-             ),
-               // ─── THE END ─────────────────────────────────────────
-               const SectionHeader('The End'),
-               const Padding(
-                 padding:
-                     EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                 child: Text(
-                   'That’s all I have done so far… but more is coming soon.',
-                   style: TextStyle(color: Colors.white70),
-                   textAlign: TextAlign.center,
-                 ),
-               ),
-
-
-
+                const ProjectCard(
+                  imagePath: 'lib/assets/icecream.png',
+                  title: 'Battle of the Ice Cream Cup',
+                  description: 'Lifecycle analysis of different materials.',
+                  techLine: '', // no tech line
+                  aspectRatio: 16 / 9,
+                  reverse: false,
+                ),
+                // ─── THE END ─────────────────────────────────────────
+                const SectionHeader('The End'),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Text(
+                    'That’s all I have done so far… but more is coming soon.',
+                    style: TextStyle(color: Colors.white70),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
 
                 // ─── FOOTER ───────────────────────────────────────────
                 const Divider(color: Colors.white54, thickness: 1),
@@ -335,6 +339,31 @@ class _PortfolioPageState extends State<PortfolioPage> {
           ),
         ),
       ),
-    );
+    if (isPortrait)
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withOpacity(0.9),
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.screen_rotation, size: 64, color: Colors.white24),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Please rotate your device\ninto landscape mode',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w300,
+                        height: 1.3,),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+    ]),
+    );   
   }
 }

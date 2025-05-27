@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:html' as html;
 
-
 /// Staggered Header
 class StaggeredHeader extends StatelessWidget {
   final String title;
@@ -154,80 +153,141 @@ class ProjectCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext c) {
-    final imageShadow = const BoxShadow(
+  Widget build(BuildContext context) {
+    const imageShadow = BoxShadow(
       color: Colors.white24,
       blurRadius: 40,
       spreadRadius: 8,
     );
 
-    // Only the image alignment toggles:
-    final imageAlignment =
-        reverse ? Alignment.centerRight : Alignment.centerLeft;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = constraints.maxWidth < 800;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-      child: Row(
-        textDirection: reverse ? TextDirection.rtl : TextDirection.ltr,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // IMAGE (2/3)
-          Expanded(
-            flex: 2,
-            child: Align(
-              alignment: imageAlignment,
-              child: SizedBox(
-                height: 300,
-                child: AspectRatio(
-                  aspectRatio: aspectRatio,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [imageShadow],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(imagePath, fit: BoxFit.cover),
+        Widget imageWidget = AspectRatio(
+          aspectRatio: aspectRatio,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [imageShadow],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(imagePath, fit: BoxFit.cover),
+            ),
+          ),
+        );
+
+        Widget textWidget = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              description,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white70),
+            ),
+            if (techLine.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                techLine,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white54),
+              ),
+            ],
+          ],
+        );
+
+        if (isMobile) {
+          // ─── MOBILE: STACK image ABOVE text, BOTH CENTERED ──────────────
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                imageWidget,
+                const SizedBox(height: 16),
+                textWidget,
+              ],
+            ),
+          );
+        }
+
+        // ─── DESKTOP: SIDE-BY-SIDE, text flush to outer edge ─────────────
+        final imgAlignment = reverse ? Alignment.centerRight : Alignment.centerLeft;
+        final textAlignment = reverse ? Alignment.centerLeft : Alignment.centerRight;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            textDirection: reverse ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              // IMAGE (2/3)
+              Expanded(
+                flex: 2,
+                child: Align(
+                  alignment: imgAlignment,
+                  child: imageWidget,
+                ),
+              ),
+
+              const SizedBox(width: 16),
+
+              // TEXT (1/3), flushed to outer edge
+              Expanded(
+                flex: 1,
+                child: Align(
+                  alignment: textAlignment,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.25),
+                    child: Column(
+                      crossAxisAlignment: reverse
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          textAlign: reverse ? TextAlign.right : TextAlign.left,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          description,
+                          textAlign: reverse ? TextAlign.right : TextAlign.left,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                        if (techLine.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            techLine,
+                            textAlign: reverse ? TextAlign.right : TextAlign.left,
+                            style: const TextStyle(color: Colors.white54),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-
-          const SizedBox(width: 16),
-
-          // TEXT (1/3) — unchanged alignment (always left)
-          Expanded(
-            flex: 1,
-            child: SizedBox(
-              height: 300,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start, // always start
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(description, style: const TextStyle(color: Colors.white70)),
-                    if (techLine.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text(techLine, style: const TextStyle(color: Colors.white54)),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
