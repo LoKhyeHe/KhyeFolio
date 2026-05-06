@@ -3,9 +3,9 @@
     {
       "id": "pulsepath",
       "title": "PulsePath",
-      "status": "completed",
-      "shortDesc": "Indoor navigation system that provides haptic guidance for visually impaired users.",
-      "fullDesc": "PulsePath is an assistive indoor navigation concept designed to help visually impaired users move through complex spaces with confidence.\n\nThe project combines a wearable haptic device with an essentials-first mobile interface. Directional pulse cues are used to reduce cognitive load while moving, so users can focus on safe navigation instead of reading dense on-screen information.\n\nThe prototype explores practical deployment in supermarket-like layouts, including aisle-level guidance and indoor positioning logic for step-by-step movement support.",
+      "status": "improving",
+      "shortDesc": "Ongoing indoor navigation system using haptic guidance for visually impaired users, developed in collaboration with TechAble, SAVH, and AWWA.",
+      "fullDesc": "PulsePath is an ongoing assistive indoor navigation initiative designed to help visually impaired users move through complex spaces with confidence.\n\nDeveloped in collaboration with TechAble, SAVH, and AWWA, the project combines a wearable haptic device with an essentials-first mobile interface. Directional pulse cues are used to reduce cognitive load while moving, so users can focus on safe navigation instead of reading dense on-screen information.\n\nThe current prototype explores practical deployment in supermarket-like layouts, including aisle-level guidance and indoor positioning logic for step-by-step movement support.",
       "imagePath": "lib/assets/pulsepath.png",
       "techStack": ["Product Design", "Assistive Tech", "Haptic Feedback", "Mobile UX"],
       "awards": [],
@@ -33,8 +33,8 @@
       "id": "wbgt-solar-panel",
       "title": "WBGT Solar Panel Monitor",
       "status": "completed",
-      "shortDesc": "Portable, solar-assisted WBGT monitoring prototype for outdoor heat stress awareness.",
-      "fullDesc": "This project focused on building a field-ready WBGT monitoring prototype powered with a compact solar panel and portable tripod setup.\n\nThe device was designed for outdoor use to support quick environmental readings where heat stress risk matters. The enclosure and mounting were iterated for stability, portability, and practical setup during on-site testing.\n\nThe final prototype combined sensing hardware, power management, and product-form considerations into a compact demonstrator that could be deployed in real-world conditions.",
+      "shortDesc": "Portable, solar-assisted WBGT monitoring prototype for outdoor heat stress awareness, including potential military field applications.",
+      "fullDesc": "This project focused on building a field-ready WBGT monitoring prototype powered with a compact solar panel and portable tripod setup.\n\nThe device was designed for outdoor use to support quick environmental readings where heat stress risk matters. This includes potential military field applications where personnel need fast, reliable heat stress indicators during prolonged operations.\n\nThe enclosure and mounting were iterated for stability, portability, and practical setup during on-site testing. The final prototype combined sensing hardware, power management, and product-form considerations into a compact demonstrator that could be deployed in real-world conditions.",
       "imagePath": "lib/assets/wbgt_main_8109.jpeg",
       "techStack": ["Embedded Systems", "Solar Power", "Prototyping", "Product Design"],
       "awards": [],
@@ -93,8 +93,8 @@
       "id": "verbasense",
       "title": "Verbasense",
       "status": "completed",
-      "shortDesc": "Smart IoT backlight that detects hand raises in classrooms using AI.",
-      "fullDesc": "Verbasense is a classroom participation tool that solves the problem of students struggling to get a teacher's attention in large classes.\n\nUsing an ESP32 microcontroller and a Python AI pipeline, the system detects when a student raises their hand and activates a backlight to visually signal the teacher. A Flutter mobile app gives teachers a real-time view of classroom participation.\n\nThe project was awarded at a school-wide hackathon, receiving recognition for AI innovation, technical robustness, and entrepreneurial potential.",
+      "shortDesc": "Smart phone-holder classroom signal that listens for confusion-related language and shows class understanding levels through color.",
+      "fullDesc": "Verbasense is a smart phone-holder concept for classrooms that helps teachers understand class comprehension at a glance.\n\nThe system listens to student conversations and detects confusion-related words and phrases. Instead of only tracking hand-raising, it reflects the overall understanding level of the class by changing color, giving teachers a quick visual indicator during lessons.\n\nThis approach helps instructors identify when to slow down, clarify concepts, or revisit key explanations without interrupting the flow of teaching.",
       "imagePath": "lib/assets/verbasense.png",
       "techStack": ["Python", "ESP32", "Flutter", "Dart"],
       "awards": [
@@ -103,10 +103,10 @@
         "Baby Shark Fund Recipient"
       ],
       "features": [
-        "Real-time AI hand detection",
-        "Wireless ESP32 hardware integration",
-        "Teacher mobile dashboard",
-        "Low-latency signal pipeline"
+        "Confusion keyword detection from classroom conversations",
+        "Color-based understanding indicator for fast teacher feedback",
+        "Phone-holder form factor for easy classroom placement",
+        "Real-time classroom sentiment reflection"
       ],
       "galleryImages": [
         "lib/assets/verbasense.png"

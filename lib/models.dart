@@ -46,6 +46,7 @@ class ExperienceEntry {
   final String subtitle;
   final List<String> tasks;
   final String imagePath;
+  final double imageAlignmentY;
   final bool isCurrent;
 
   const ExperienceEntry({
@@ -53,6 +54,7 @@ class ExperienceEntry {
     required this.subtitle,
     required this.tasks,
     required this.imagePath,
+    this.imageAlignmentY = -0.2,
     this.isCurrent = false,
   });
 }

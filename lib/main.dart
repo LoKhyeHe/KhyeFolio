@@ -48,6 +48,16 @@ class _PortfolioPageState extends State<PortfolioPage> {
 
   static const _experiences = [
     ExperienceEntry(
+      title: 'Freelance @ MakeIT',
+      subtitle: 'Jan 2026  ·  Current',
+      imagePath: '',
+      tasks: [
+        'Educate community patrons of all ages through hands-on workshops in 3D printing and laser cutting.',
+        'Maintain makerspace operations, equipment readiness, and safe workflows for daily public use.',
+      ],
+      isCurrent: true,
+    ),
+    ExperienceEntry(
       title: 'Assistant Engineer @ Temasek Polytechnic',
       subtitle: 'Part-time  ·  Apr 2022 – Oct 2022',
       imagePath: 'lib/assets/temasek_poly.jpg',
@@ -57,9 +67,10 @@ class _PortfolioPageState extends State<PortfolioPage> {
       ],
     ),
     ExperienceEntry(
-      title: 'Robotics Intern @ Weston Robot',
-      subtitle: 'Internship  ·  Sep 2021 – Feb 2022',
+      title: 'Robotics Engineer @ Weston Robot',
+      subtitle: 'Engineering Role  ·  Sep 2021 – Feb 2022',
       imagePath: 'lib/assets/weston_robot_alt.jpg',
+      imageAlignmentY: -0.5,
       tasks: [
         'Built a Flutter mobile application for interfacing with in-house robots for diagnostic purposes.',
       ],
@@ -200,23 +211,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Eyebrow label
-        Row(
-          children: [
-            Container(width: 20, height: 1, color: kCyan.withValues(alpha: 0.6)),
-            const SizedBox(width: 10),
-            Text(
-              'PORTFOLIO  ·  2024',
-              style: TextStyle(
-                color: kCyan.withValues(alpha: 0.6),
-                fontSize: 10,
-                letterSpacing: 4,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 10),
 
         // Name
         const Text(
@@ -287,7 +282,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
               onTap: () => _scrollTo(_projKey),
             ),
             const SizedBox(width: 14),
-            EmailButton(toAddress: 'hello@example.com', label: 'Contact'),
+            EmailButton(toAddress: 'khyehe_lo@mymail.sutd.edu.sg', label: 'Contact'),
           ],
         ),
         const SizedBox(height: 40),
@@ -599,8 +594,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
           spacing: 40,
           runSpacing: 24,
           children: [
-            StatBlock(value: '3+', label: 'Projects'),
-            StatBlock(value: '2', label: 'Internships'),
+            StatBlock(value: '5', label: 'Projects'),
+            StatBlock(value: '2', label: 'Engineering Work'),
             StatBlock(value: 'STEP', label: 'Scholar'),
           ],
         ),

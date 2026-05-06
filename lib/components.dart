@@ -375,7 +375,11 @@ class StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final done = status == 'completed';
-    final color = done ? const Color(0xFF22C55E) : const Color(0xFFF97316);
+    final improving = status == 'improving';
+    final color = done
+        ? const Color(0xFF22C55E)
+        : (improving ? const Color(0xFF06B6D4) : const Color(0xFFF97316));
+    final text = done ? 'Completed' : (improving ? 'Improving' : 'Ongoing');
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -393,7 +397,7 @@ class StatusBadge extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            done ? 'Completed' : 'Ongoing',
+            text,
             style: TextStyle(
               color: color,
               fontSize: 11,
@@ -712,17 +716,23 @@ class _TimelineItemState extends State<_TimelineItem> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: AspectRatio(
-                        aspectRatio: 16 / 8,
-                        child: Image.asset(
-                          widget.entry.imagePath,
-                          fit: BoxFit.cover,
+                    if (widget.entry.imagePath.trim().isNotEmpty) ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: AspectRatio(
+                          aspectRatio: 16 / 6.2,
+                          child: Opacity(
+                            opacity: 0.82,
+                            child: Image.asset(
+                              widget.entry.imagePath,
+                              fit: BoxFit.cover,
+                              alignment: Alignment(0, widget.entry.imageAlignmentY),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 12),
+                    ],
                     Text(
                       widget.entry.title,
                       style: const TextStyle(
