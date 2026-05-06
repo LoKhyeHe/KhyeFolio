@@ -1,11 +1,11 @@
 {
-    "name": "term_summary",
-    "short_name": "term_summary",
+    "name": "Lo Khye He | Engineering Portfolio",
+    "short_name": "KhyeFolio",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Portfolio of Lo Khye He featuring engineering projects in robotics, assistive tech, and IoT.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
