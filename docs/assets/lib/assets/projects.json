@@ -1,23 +1,35 @@
 {
   "projects": [
     {
-      "id": "verbasense",
-      "title": "Verbasense",
+      "id": "pulsepath",
+      "title": "PulsePath",
       "status": "completed",
-      "shortDesc": "Smart IoT backlight that detects hand raises in classrooms using AI.",
-      "fullDesc": "Verbasense is a classroom participation tool that solves the problem of students struggling to get a teacher's attention in large classes.\n\nUsing an ESP32 microcontroller and a Python AI pipeline, the system detects when a student raises their hand and activates a backlight to visually signal the teacher. A Flutter mobile app gives teachers a real-time view of classroom participation.\n\nThe project was awarded at a school-wide hackathon, receiving recognition for AI innovation, technical robustness, and entrepreneurial potential.",
-      "imagePath": "lib/assets/verbasense.png",
-      "techStack": ["Python", "ESP32", "Flutter", "Dart"],
-      "awards": [
-        "Best Use of AI Award",
-        "Most Technically Robust Design",
-        "Baby Shark Fund Recipient"
-      ],
+      "shortDesc": "Indoor navigation system that provides haptic guidance for visually impaired users.",
+      "fullDesc": "PulsePath is an assistive indoor navigation concept designed to help visually impaired users move through complex spaces with confidence.\n\nThe project combines a wearable haptic device with an essentials-first mobile interface. Directional pulse cues are used to reduce cognitive load while moving, so users can focus on safe navigation instead of reading dense on-screen information.\n\nThe prototype explores practical deployment in supermarket-like layouts, including aisle-level guidance and indoor positioning logic for step-by-step movement support.",
+      "imagePath": "lib/assets/pulsepath.png",
+      "techStack": ["Product Design", "Assistive Tech", "Haptic Feedback", "Mobile UX"],
+      "awards": [],
       "features": [
-        "Real-time AI hand detection",
-        "Wireless ESP32 hardware integration",
-        "Teacher mobile dashboard",
-        "Low-latency signal pipeline"
+        "Clear directional haptic pulse guidance",
+        "Low cognitive load, essentials-only UI",
+        "Indoor positioning and aisle selection flow",
+        "Wearable form factor for hands-free use"
+      ]
+    },
+    {
+      "id": "wbgt-solar-panel",
+      "title": "WBGT Solar Panel Monitor",
+      "status": "completed",
+      "shortDesc": "Portable, solar-assisted WBGT monitoring prototype for outdoor heat stress awareness.",
+      "fullDesc": "This project focused on building a field-ready WBGT monitoring prototype powered with a compact solar panel and portable tripod setup.\n\nThe device was designed for outdoor use to support quick environmental readings where heat stress risk matters. The enclosure and mounting were iterated for stability, portability, and practical setup during on-site testing.\n\nThe final prototype combined sensing hardware, power management, and product-form considerations into a compact demonstrator that could be deployed in real-world conditions.",
+      "imagePath": "lib/assets/wbgt_solar_panel.jpg",
+      "techStack": ["Embedded Systems", "Solar Power", "Prototyping", "Product Design"],
+      "awards": [],
+      "features": [
+        "Portable tripod-mounted monitor form factor",
+        "Solar-assisted power for longer outdoor usage",
+        "Weather-aware prototype for WBGT readings",
+        "Rapid setup for field validation and demos"
       ]
     },
     {
@@ -50,6 +62,26 @@
         "3 material types compared",
         "Quantitative carbon emission modeling",
         "Policy recommendation framework"
+      ]
+    },
+    {
+      "id": "verbasense",
+      "title": "Verbasense",
+      "status": "completed",
+      "shortDesc": "Smart IoT backlight that detects hand raises in classrooms using AI.",
+      "fullDesc": "Verbasense is a classroom participation tool that solves the problem of students struggling to get a teacher's attention in large classes.\n\nUsing an ESP32 microcontroller and a Python AI pipeline, the system detects when a student raises their hand and activates a backlight to visually signal the teacher. A Flutter mobile app gives teachers a real-time view of classroom participation.\n\nThe project was awarded at a school-wide hackathon, receiving recognition for AI innovation, technical robustness, and entrepreneurial potential.",
+      "imagePath": "lib/assets/verbasense.png",
+      "techStack": ["Python", "ESP32", "Flutter", "Dart"],
+      "awards": [
+        "Best Use of AI Award",
+        "Most Technically Robust Design",
+        "Baby Shark Fund Recipient"
+      ],
+      "features": [
+        "Real-time AI hand detection",
+        "Wireless ESP32 hardware integration",
+        "Teacher mobile dashboard",
+        "Low-latency signal pipeline"
       ]
     }
   ]
