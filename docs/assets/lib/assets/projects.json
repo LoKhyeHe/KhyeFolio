@@ -1,0 +1,56 @@
+{
+  "projects": [
+    {
+      "id": "verbasense",
+      "title": "Verbasense",
+      "status": "completed",
+      "shortDesc": "Smart IoT backlight that detects hand raises in classrooms using AI.",
+      "fullDesc": "Verbasense is a classroom participation tool that solves the problem of students struggling to get a teacher's attention in large classes.\n\nUsing an ESP32 microcontroller and a Python AI pipeline, the system detects when a student raises their hand and activates a backlight to visually signal the teacher. A Flutter mobile app gives teachers a real-time view of classroom participation.\n\nThe project was awarded at a school-wide hackathon, receiving recognition for AI innovation, technical robustness, and entrepreneurial potential.",
+      "imagePath": "lib/assets/verbasense.png",
+      "techStack": ["Python", "ESP32", "Flutter", "Dart"],
+      "awards": [
+        "Best Use of AI Award",
+        "Most Technically Robust Design",
+        "Baby Shark Fund Recipient"
+      ],
+      "features": [
+        "Real-time AI hand detection",
+        "Wireless ESP32 hardware integration",
+        "Teacher mobile dashboard",
+        "Low-latency signal pipeline"
+      ]
+    },
+    {
+      "id": "capacitor",
+      "title": "DIY Variable Capacitor",
+      "status": "completed",
+      "shortDesc": "Custom disk-style variable capacitor designed and 3D printed using Fusion 360.",
+      "fullDesc": "A disk-style variable capacitor designed entirely in Fusion 360 and fabricated using additive manufacturing techniques.\n\nThe design allows capacitance to be adjusted mechanically by rotating the disk array, enabling fine-tuned control for use in electronics experiments and RF circuits. Every component was designed from scratch with precise tolerances to ensure reliable electrical performance.\n\nThis project was an exploration into bridging mechanical design with electrical engineering fundamentals.",
+      "imagePath": "lib/assets/capacitor.png",
+      "techStack": ["Fusion 360", "3D Printing", "Electronics"],
+      "awards": [],
+      "features": [
+        "Adjustable capacitance via disk rotation",
+        "Fully 3D printed structure",
+        "Designed from scratch in Fusion 360",
+        "Suitable for RF circuit experiments"
+      ]
+    },
+    {
+      "id": "icecream",
+      "title": "Battle of the Ice Cream Cup",
+      "status": "completed",
+      "shortDesc": "Lifecycle analysis comparing environmental impact of different ice cream cup materials.",
+      "fullDesc": "A comprehensive lifecycle analysis (LCA) comparing the environmental footprint of paper, plastic, and biodegradable ice cream cup alternatives.\n\nThe study evaluated each material from raw material extraction through production, use, and disposal — considering energy consumption, carbon emissions, and waste generation across each stage.\n\nFindings revealed nuanced trade-offs: biodegradable alternatives are not always the most eco-friendly option depending on regional waste infrastructure, consumer behavior, and end-of-life processing.",
+      "imagePath": "lib/assets/icecream.png",
+      "techStack": ["Research", "LCA Methodology", "Data Analysis"],
+      "awards": [],
+      "features": [
+        "Cradle-to-grave lifecycle analysis",
+        "3 material types compared",
+        "Quantitative carbon emission modeling",
+        "Policy recommendation framework"
+      ]
+    }
+  ]
+}

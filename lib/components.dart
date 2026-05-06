@@ -1,71 +1,357 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'dart:html' as html;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:term_summary/models.dart';
+import 'package:term_summary/pages/project_detail.dart';
 
-/// Staggered Header
-class StaggeredHeader extends StatelessWidget {
-  final String title;
-  /// if true, the *short* line will be on the left; otherwise on the right
-  final bool lineBefore;
+// ── DESIGN TOKENS ─────────────────────────────────────────────────────────────
+const kBg      = Color(0xFF060810);
+const kSurface = Color(0xFF0C111A);
+const kCard    = Color(0xFF101724);
+const kBorder  = Color(0xFF1B2740);
+const kCyan    = Color(0xFF00CCFF);
+const kPurple  = Color(0xFF8B5CF6);
 
-  const StaggeredHeader(
-    this.title, {
-    this.lineBefore = false,
-    Key? key,
-  }) : super(key: key);
+// ── GLASS NAV ─────────────────────────────────────────────────────────────────
+
+class GlassNav extends StatefulWidget {
+  final VoidCallback onAbout;
+  final VoidCallback onExperience;
+  final VoidCallback onProjects;
+
+  const GlassNav({
+    required this.onAbout,
+    required this.onExperience,
+    required this.onProjects,
+    super.key,
+  });
+
+  @override
+  State<GlassNav> createState() => _GlassNavState();
+}
+
+class _GlassNavState extends State<GlassNav> {
+  String? _hovered;
+
+  Widget _link(String label, VoidCallback onTap) {
+    final hot = _hovered == label;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = label),
+      onExit: (_) => setState(() => _hovered = null),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: hot ? Colors.white : Colors.white54,
+                  fontSize: 13,
+                  fontWeight: hot ? FontWeight.w600 : FontWeight.w400,
+                  letterSpacing: 0.3,
+                ),
+              ),
+              const SizedBox(height: 3),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: 1.5,
+                width: hot ? 18.0 : 0.0,
+                decoration: BoxDecoration(
+                  color: kCyan,
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    // decide which side is short vs. long
-    final beforeFlex = lineBefore ? 1 : 15;
-    final afterFlex  = lineBefore ? 15 : 1;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Row(
-        children: [
-          // short or long line segment before text
-          Expanded(
-            flex: beforeFlex,
-            child: const Divider(color: Colors.white54, thickness: 1),
-          ),
-          const SizedBox(width: 8),
-
-          // the title itself
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+        child: Container(
+          decoration: BoxDecoration(
+            color: kBg.withValues(alpha: 0.72),
+            border: Border(
+              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
             ),
           ),
-
-          const SizedBox(width: 8),
-          // the other line segment after text
-          Expanded(
-            flex: afterFlex,
-            child: const Divider(color: Colors.white54, thickness: 1),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Logo
+                  RichText(
+                    text: const TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'KH',
+                          style: TextStyle(
+                            color: kCyan,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '.',
+                          style: TextStyle(
+                            color: kPurple,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Links
+                  Row(
+                    children: [
+                      _link('About', widget.onAbout),
+                      _link('Experience', widget.onExperience),
+                      _link('Projects', widget.onProjects),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
 }
+
+// ── PULSING GLOW IMAGE ────────────────────────────────────────────────────────
+
+class PulsingGlowImage extends StatefulWidget {
+  final String assetPath;
+  final double size;
+
+  const PulsingGlowImage({
+    required this.assetPath,
+    required this.size,
+    super.key,
+  });
+
+  @override
+  State<PulsingGlowImage> createState() => _PulsingGlowImageState();
+}
+
+class _PulsingGlowImageState extends State<PulsingGlowImage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, child) {
+        final v = _ctrl.value;
+        return Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: kCyan.withValues(alpha: 0.12 + v * 0.18),
+                blurRadius: 40 + v * 24,
+                spreadRadius: v * 6,
+              ),
+              BoxShadow(
+                color: kPurple.withValues(alpha: 0.06 + v * 0.09),
+                blurRadius: 60 + v * 30,
+              ),
+            ],
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.lerp(kCyan, kPurple, v)!,
+                  Color.lerp(kPurple, kCyan, v)!,
+                ],
+              ),
+            ),
+            child: child!,
+          ),
+        );
+      },
+      child: ClipOval(
+        child: Image.asset(
+          widget.assetPath,
+          width: widget.size,
+          height: widget.size,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+}
+
+// ── SECTION LABEL ─────────────────────────────────────────────────────────────
+
+class SectionLabel extends StatelessWidget {
+  final String text;
+  const SectionLabel(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: kCyan,
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 3.5,
+      ),
+    );
+  }
+}
+
+// ── STAT BLOCK ────────────────────────────────────────────────────────────────
+
+class StatBlock extends StatelessWidget {
+  final String value;
+  final String label;
+
+  const StatBlock({required this.value, required this.label, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: kCyan,
+            fontSize: 38,
+            fontWeight: FontWeight.w900,
+            height: 1.0,
+            letterSpacing: -1.5,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          label.toUpperCase(),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.35),
+            fontSize: 10,
+            letterSpacing: 2,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── PORTFOLIO BUTTON ──────────────────────────────────────────────────────────
+
+class PortfolioButton extends StatefulWidget {
+  final String label;
+  final bool filled;
+  final VoidCallback onTap;
+
+  const PortfolioButton({
+    required this.label,
+    required this.onTap,
+    this.filled = false,
+    super.key,
+  });
+
+  @override
+  State<PortfolioButton> createState() => _PortfolioButtonState();
+}
+
+class _PortfolioButtonState extends State<PortfolioButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          decoration: BoxDecoration(
+            color: widget.filled
+                ? (_hovered ? Colors.white : kCyan)
+                : (_hovered ? kCyan.withValues(alpha: 0.10) : Colors.transparent),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: kCyan, width: 1.5),
+            boxShadow: widget.filled && _hovered
+                ? [BoxShadow(color: kCyan.withValues(alpha: 0.3), blurRadius: 20)]
+                : [],
+          ),
+          child: Text(
+            widget.label,
+            style: TextStyle(
+              color: widget.filled
+                  ? Colors.black
+                  : (_hovered ? kCyan : Colors.white70),
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── GLOW IMAGE ────────────────────────────────────────────────────────────────
 
 class GlowImage extends StatelessWidget {
   final String assetPath;
   final double width, height;
   final BoxFit fit;
   final BoxShadow shadow;
+
   const GlowImage({
     required this.assetPath,
     required this.width,
     required this.height,
     required this.shadow,
     this.fit = BoxFit.cover,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
+
   @override
   Widget build(BuildContext c) => DecoratedBox(
         decoration: BoxDecoration(
@@ -74,314 +360,150 @@ class GlowImage extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: Image.asset(assetPath, width: width, height: height, fit: fit),
+          child:
+              Image.asset(assetPath, width: width, height: height, fit: fit),
         ),
       );
 }
-/// A little experience card: title, subtitle, and a list of bullet tasks.
-class ExperienceSection extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final List<String> tasks;
 
-  const ExperienceSection({
-    required this.title,
-    required this.subtitle,
-    required this.tasks,
-    Key? key,
-  }) : super(key: key);
+// ── STATUS BADGE ──────────────────────────────────────────────────────────────
+
+class StatusBadge extends StatelessWidget {
+  final String status;
+  const StatusBadge(this.status, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+    final done = status == 'completed';
+    final color = done ? const Color(0xFF22C55E) : const Color(0xFFF97316);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.6)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 5,
+            height: 5,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          subtitle,
-          style: const TextStyle(color: Colors.white54),
-        ),
-        const SizedBox(height: 8),
-        if (tasks.isNotEmpty) ...[
-          const Text(
-            'My tasks include:',
-            style: TextStyle(color: Colors.white70),
+          const SizedBox(width: 6),
+          Text(
+            done ? 'Completed' : 'Ongoing',
+            style: TextStyle(
+              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
+            ),
           ),
-          for (var t in tasks) 
-            Text('• $t', style: const TextStyle(color: Colors.white70)),
         ],
-      ],
+      ),
     );
   }
 }
 
-class ProjectCard extends StatelessWidget {
-  /// Path to your asset in pubspec.yaml
-  final String imagePath;
+// ── TECH CHIP ─────────────────────────────────────────────────────────────────
 
-  /// Bold title above description
-  final String title;
-
-  /// The subtitle / one-line description
-  final String description;
-
-  /// A single line of tech, e.g. "Flutter | Dart"
-  final String techLine;
-
-  /// Aspect ratio to use for the image portion (16/9, 1, etc).
-  final double aspectRatio;
-
-  /// If true, image goes on the right, text on the left.
-  final bool reverse;
-
-  const ProjectCard({
-    required this.imagePath,
-    required this.title,
-    required this.description,
-    required this.techLine,
-    required this.aspectRatio,
-    required this.reverse,
-    Key? key,
-  }) : super(key: key);
+class TechChip extends StatelessWidget {
+  final String label;
+  const TechChip(this.label, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    const imageShadow = BoxShadow(
-      color: Colors.white24,
-      blurRadius: 40,
-      spreadRadius: 8,
-    );
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < 800;
-
-        Widget imageWidget = AspectRatio(
-          aspectRatio: aspectRatio,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [imageShadow],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(imagePath, fit: BoxFit.cover),
-            ),
-          ),
-        );
-
-        Widget textWidget = Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white70),
-            ),
-            if (techLine.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                techLine,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white54),
-              ),
-            ],
-          ],
-        );
-
-        if (isMobile) {
-          // ─── MOBILE: STACK image ABOVE text, BOTH CENTERED ──────────────
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                imageWidget,
-                const SizedBox(height: 16),
-                textWidget,
-              ],
-            ),
-          );
-        }
-
-        // ─── DESKTOP: SIDE-BY-SIDE, text flush to outer edge ─────────────
-        final imgAlignment = reverse ? Alignment.centerRight : Alignment.centerLeft;
-        final textAlignment = reverse ? Alignment.centerLeft : Alignment.centerRight;
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            textDirection: reverse ? TextDirection.rtl : TextDirection.ltr,
-            children: [
-              // IMAGE (2/3)
-              Expanded(
-                flex: 2,
-                child: Align(
-                  alignment: imgAlignment,
-                  child: imageWidget,
-                ),
-              ),
-
-              const SizedBox(width: 16),
-
-              // TEXT (1/3), flushed to outer edge
-              Expanded(
-                flex: 1,
-                child: Align(
-                  alignment: textAlignment,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.25),
-                    child: Column(
-                      crossAxisAlignment: reverse
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          textAlign: reverse ? TextAlign.right : TextAlign.left,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          description,
-                          textAlign: reverse ? TextAlign.right : TextAlign.left,
-                          style: const TextStyle(color: Colors.white70),
-                        ),
-                        if (techLine.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            techLine,
-                            textAlign: reverse ? TextAlign.right : TextAlign.left,
-                            style: const TextStyle(color: Colors.white54),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class SectionHeader extends StatelessWidget {
-  final String title;
-  const SectionHeader(this.title, {Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext c) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Row(children: [
-          const Expanded(child: Divider(color: Colors.white54, thickness: 1)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(title,
-                style: const TextStyle(
-                    color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-          ),
-          const Expanded(child: Divider(color: Colors.white54, thickness: 1)),
-        ]),
-      );
-}
-
-class NavButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-  const NavButton(this.label, this.onTap, {Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext c) =>
-      TextButton(onPressed: onTap, child: Text(label, style: const TextStyle(color: Colors.white)));
-}
-
-
-
-class SocialItem extends StatelessWidget {
-  /// The FontAwesome icon to display.
-  final IconData icon;
-  /// The label underneath the icon.
-  final String label;
-  /// The URL to open when the user taps this item.
-  final String url;
-
-  const SocialItem({
-    required this.icon,
-    required this.label,
-    required this.url,
-    Key? key,
-  }) : super(key: key);
-
-  void _launch() {
-    // Opens in a new browser tab
-    html.window.open(url, '_blank');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: _launch,
-      borderRadius: BorderRadius.circular(100),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(icon, color: Colors.white, size: 28),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
-            ),
-          ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: kCyan.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: kCyan.withValues(alpha: 0.28)),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: kCyan,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
         ),
       ),
     );
   }
 }
 
+// ── SOCIAL ITEM ───────────────────────────────────────────────────────────────
 
-/// A button that opens a small subject+body dialog and then
-/// launches the user’s mail client via a mailto: link.
-class EmailButton extends StatelessWidget {
-  /// The email address to send to.
-  final String toAddress;
-  /// The button’s label.
+class SocialItem extends StatefulWidget {
+  final IconData icon;
   final String label;
-  /// Accent color for outlines / buttons.
+  final String url;
+
+  const SocialItem({
+    required this.icon,
+    required this.label,
+    required this.url,
+    super.key,
+  });
+
+  @override
+  State<SocialItem> createState() => _SocialItemState();
+}
+
+class _SocialItemState extends State<SocialItem> {
+  bool _hovered = false;
+
+  Future<void> _openLink() async {
+    final uri = Uri.tryParse(widget.url);
+    if (uri == null) return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: _openLink,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: _hovered ? kCyan.withValues(alpha: 0.12) : Colors.transparent,
+            border: Border.all(
+              color: _hovered ? kCyan.withValues(alpha: 0.5) : Colors.white12,
+            ),
+          ),
+          child: FaIcon(
+            widget.icon,
+            color: _hovered ? kCyan : Colors.white54,
+            size: 18,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── EMAIL BUTTON ──────────────────────────────────────────────────────────────
+
+class EmailButton extends StatelessWidget {
+  final String toAddress;
+  final String label;
   final Color accentColor;
 
   const EmailButton({
     required this.toAddress,
     required this.label,
-    this.accentColor = Colors.cyanAccent,
-    Key? key,
-  }) : super(key: key);
+    this.accentColor = kCyan,
+    super.key,
+  });
 
   void _openEmailDialog(BuildContext context) {
     final subjectCtrl = TextEditingController();
@@ -389,97 +511,60 @@ class EmailButton extends StatelessWidget {
 
     showDialog(
       context: context,
-      barrierColor: Colors.black54, // dim the background
+      barrierColor: Colors.black.withValues(alpha: 0.6),
       builder: (context) => Dialog(
-        backgroundColor: Colors.grey[900],
-        insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: kCard,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 500),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(28),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Send me an email',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                const Text(
+                  'Send me a message',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 24),
-                TextField(
-                  controller: subjectCtrl,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: 'Subject',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    filled: true,
-                    fillColor: Colors.grey[800],
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: accentColor),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: accentColor, width: 2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: bodyCtrl,
-                  maxLines: 5,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: 'Message',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    filled: true,
-                    fillColor: Colors.grey[800],
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: accentColor),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: accentColor, width: 2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
+                _field(subjectCtrl, 'Subject', accentColor),
+                const SizedBox(height: 14),
+                _field(bodyCtrl, 'Message', accentColor, maxLines: 5),
                 const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white70,
-                      ),
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel',
+                          style: TextStyle(color: Colors.white38)),
                     ),
-                    const SizedBox(width: 16),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: accentColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        final subject = Uri.encodeComponent(subjectCtrl.text);
-                        final body = Uri.encodeComponent(bodyCtrl.text);
-                        final mailto = 'mailto:$toAddress'
-                            '?subject=$subject&body=$body';
-                        html.window.open(mailto, '_self');
-                        Navigator.of(context).pop();
+                    const SizedBox(width: 12),
+                    PortfolioButton(
+                      label: 'Send',
+                      filled: true,
+                      onTap: () async {
+                        if (toAddress.trim().isEmpty) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Email address is not configured yet.'),
+                            ),
+                          );
+                          Navigator.pop(context);
+                          return;
+                        }
+                        final mailto =
+                            'mailto:$toAddress?subject=${Uri.encodeComponent(subjectCtrl.text)}&body=${Uri.encodeComponent(bodyCtrl.text)}';
+                        await launchUrl(Uri.parse(mailto));
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
                       },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 12),
-                        child: Text('Send', style: TextStyle(color: Colors.black)),
-                      ),
                     ),
                   ],
                 ),
@@ -491,15 +576,467 @@ class EmailButton extends StatelessWidget {
     );
   }
 
+  Widget _field(TextEditingController ctrl, String hint, Color accent,
+      {int maxLines = 1}) {
+    return TextField(
+      controller: ctrl,
+      maxLines: maxLines,
+      style: const TextStyle(color: Colors.white, fontSize: 14),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(color: Colors.white24),
+        filled: true,
+        fillColor: kBg,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: accent.withValues(alpha: 0.3)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: accent, width: 1.5),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white12),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () => _openEmailDialog(context),
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(color: accentColor),
-        foregroundColor: accentColor,
+    return PortfolioButton(
+      label: label,
+      filled: false,
+      onTap: () => _openEmailDialog(context),
+    );
+  }
+}
+
+// ── EXPERIENCE TIMELINE ───────────────────────────────────────────────────────
+
+class ExperienceTimeline extends StatelessWidget {
+  final List<ExperienceEntry> entries;
+  const ExperienceTimeline({required this.entries, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(
+        entries.length,
+        (i) => _TimelineItem(entry: entries[i], isLast: i == entries.length - 1),
       ),
-      child: Text(label),
+    );
+  }
+}
+
+class _TimelineItem extends StatefulWidget {
+  final ExperienceEntry entry;
+  final bool isLast;
+  const _TimelineItem({required this.entry, required this.isLast});
+
+  @override
+  State<_TimelineItem> createState() => _TimelineItemState();
+}
+
+class _TimelineItemState extends State<_TimelineItem> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final dotColor = widget.entry.isCurrent ? kCyan : Colors.white30;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Spine
+            SizedBox(
+              width: 24,
+              child: Column(
+                children: [
+                  const SizedBox(height: 5),
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: dotColor,
+                      shape: BoxShape.circle,
+                      boxShadow: widget.entry.isCurrent
+                          ? [BoxShadow(color: kCyan.withValues(alpha: 0.5), blurRadius: 8, spreadRadius: 2)]
+                          : [],
+                    ),
+                  ),
+                  if (!widget.isLast)
+                    Expanded(
+                      child: Center(
+                        child: Container(
+                          width: 1,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.white.withValues(alpha: 0.12),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 20),
+
+            // Content card
+            Expanded(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: EdgeInsets.only(bottom: widget.isLast ? 0 : 28),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: _hovered ? kCard : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: _hovered ? kBorder : Colors.transparent,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.entry.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      widget.entry.subtitle,
+                      style: const TextStyle(color: Colors.white38, fontSize: 12, letterSpacing: 0.3),
+                    ),
+                    if (widget.entry.tasks.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      ...widget.entry.tasks.map(
+                        (t) => Padding(
+                          padding: const EdgeInsets.only(bottom: 7),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6),
+                                child: Container(
+                                  width: 4,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: kCyan.withValues(alpha: 0.6),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  t,
+                                  style: const TextStyle(
+                                    color: Colors.white54,
+                                    fontSize: 13,
+                                    height: 1.6,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── FULL-PAGE SCROLL PROJECTS ─────────────────────────────────────────────────
+
+class ProjectsFullScrollView extends StatelessWidget {
+  final List<Project> projects;
+  final ScrollController scrollController;
+
+  const ProjectsFullScrollView({
+    required this.projects,
+    required this.scrollController,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(
+        projects.length,
+        (i) => ProjectScrollItem(
+          project: projects[i],
+          index: i,
+          scrollController: scrollController,
+        ),
+      ),
+    );
+  }
+}
+
+class ProjectScrollItem extends StatefulWidget {
+  final Project project;
+  final int index;
+  final ScrollController scrollController;
+
+  const ProjectScrollItem({
+    required this.project,
+    required this.index,
+    required this.scrollController,
+    super.key,
+  });
+
+  @override
+  State<ProjectScrollItem> createState() => _ProjectScrollItemState();
+}
+
+class _ProjectScrollItemState extends State<ProjectScrollItem> {
+  final _key = GlobalKey();
+  double _progress = 0.0;
+  bool get _fromLeft => widget.index.isEven;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(_update);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _update());
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_update);
+    super.dispose();
+  }
+
+  void _update() {
+    if (!mounted) return;
+    final ctx = _key.currentContext;
+    if (ctx == null) return;
+    final box = ctx.findRenderObject() as RenderBox?;
+    if (box == null) return;
+    final screenH = MediaQuery.of(context).size.height;
+    final top = box.localToGlobal(Offset.zero).dy;
+    final h = box.size.height;
+    final p = ((screenH - top) / (screenH + h)).clamp(0.0, 1.0);
+    if ((p - _progress).abs() > 0.0008) setState(() => _progress = p);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenH = MediaQuery.of(context).size.height;
+
+    final slideRaw = ((_progress - 0.10) / 0.35).clamp(0.0, 1.0);
+    final curved = Curves.easeOut.transform(slideRaw);
+    final slideX = _fromLeft ? -300.0 * (1 - curved) : 300.0 * (1 - curved);
+    final opacity = curved;
+    final parallax = (_progress - 0.5) * 80;
+    final imgScale = 1.05 + (0.08 * _progress).clamp(0.0, 0.08);
+    final numStr = widget.index < 9 ? '0${widget.index + 1}' : '${widget.index + 1}';
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final contentW = (constraints.maxWidth * 0.40).clamp(260.0, 480.0);
+        return ClipRect(
+          child: SizedBox(
+            key: _key,
+            height: screenH * 0.88,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                // Image with parallax + zoom
+                Positioned(
+                  top: -50 + parallax,
+                  bottom: -50 - parallax,
+                  left: 0,
+                  right: 0,
+                  child: Transform.scale(
+                    scale: imgScale,
+                    child: Image.asset(widget.project.imagePath, fit: BoxFit.cover),
+                  ),
+                ),
+
+                // Gradient: dark on text side, image shows on other
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: _fromLeft ? Alignment.centerLeft : Alignment.centerRight,
+                      end: _fromLeft ? Alignment.centerRight : Alignment.centerLeft,
+                      stops: const [0.0, 0.40, 0.68, 1.0],
+                      colors: [
+                        kBg.withValues(alpha: 0.96),
+                        kBg.withValues(alpha: 0.80),
+                        kBg.withValues(alpha: 0.20),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Sliding content
+                Positioned(
+                  left: _fromLeft ? 56 : null,
+                  right: _fromLeft ? null : 56,
+                  top: 0,
+                  bottom: 0,
+                  width: contentW,
+                  child: Transform.translate(
+                    offset: Offset(slideX, 0),
+                    child: Opacity(
+                      opacity: opacity,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment:
+                              _fromLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              numStr,
+                              style: TextStyle(
+                                color: kCyan.withValues(alpha: 0.12),
+                                fontSize: 100,
+                                fontWeight: FontWeight.w900,
+                                height: 1.0,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            StatusBadge(widget.project.status),
+                            const SizedBox(height: 16),
+                            Text(
+                              widget.project.title,
+                              textAlign: _fromLeft ? TextAlign.left : TextAlign.right,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 36,
+                                fontWeight: FontWeight.w800,
+                                height: 1.1,
+                                letterSpacing: -0.8,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              widget.project.shortDesc,
+                              textAlign: _fromLeft ? TextAlign.left : TextAlign.right,
+                              style: const TextStyle(
+                                color: Colors.white54,
+                                fontSize: 14,
+                                height: 1.7,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              alignment: _fromLeft ? WrapAlignment.start : WrapAlignment.end,
+                              children: widget.project.techStack
+                                  .take(3)
+                                  .map((t) => TechChip(t))
+                                  .toList(),
+                            ),
+                            const SizedBox(height: 28),
+                            _ScrollViewButton(project: widget.project, alignRight: !_fromLeft),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ScrollViewButton extends StatefulWidget {
+  final Project project;
+  final bool alignRight;
+  const _ScrollViewButton({required this.project, required this.alignRight});
+
+  @override
+  State<_ScrollViewButton> createState() => _ScrollViewButtonState();
+}
+
+class _ScrollViewButtonState extends State<_ScrollViewButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () => Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => ProjectDetailPage(project: widget.project),
+            transitionsBuilder: (_, a, __, child) =>
+                FadeTransition(opacity: a, child: child),
+          ),
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 11),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: _hovered ? kCyan : Colors.white24,
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(5),
+            color: _hovered ? kCyan.withValues(alpha: 0.10) : Colors.transparent,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.alignRight) ...[
+                Icon(Icons.arrow_back, size: 13,
+                    color: _hovered ? kCyan : Colors.white54),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                'View Project',
+                style: TextStyle(
+                  color: _hovered ? kCyan : Colors.white54,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8,
+                ),
+              ),
+              if (!widget.alignRight) ...[
+                const SizedBox(width: 8),
+                Icon(Icons.arrow_forward, size: 13,
+                    color: _hovered ? kCyan : Colors.white54),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
