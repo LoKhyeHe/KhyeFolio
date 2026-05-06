@@ -34,27 +34,6 @@ class Project {
       features: List<String>.from(json['features'] as List),
     );
   }
-
-  factory Project.fromDb(Map<String, dynamic> json) {
-    List<String> toStringList(dynamic value) {
-      if (value is List) {
-        return value.map((e) => e.toString()).toList();
-      }
-      return const [];
-    }
-
-    return Project(
-      id: (json['id'] ?? '').toString(),
-      title: (json['title'] ?? '').toString(),
-      status: (json['status'] ?? 'ongoing').toString(),
-      shortDesc: (json['short_desc'] ?? '').toString(),
-      fullDesc: (json['full_desc'] ?? '').toString(),
-      imagePath: (json['image_path'] ?? '').toString(),
-      techStack: toStringList(json['tech_stack']),
-      awards: toStringList(json['awards']),
-      features: toStringList(json['features']),
-    );
-  }
 }
 
 class ExperienceEntry {

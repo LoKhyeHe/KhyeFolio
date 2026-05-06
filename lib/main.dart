@@ -1,22 +1,12 @@
+import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:term_summary/config/supabase_config.dart';
 import 'package:term_summary/components.dart';
-import 'package:term_summary/data/project_repository.dart';
 import 'package:term_summary/models.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  if (SupabaseConfig.isConfigured) {
-    await Supabase.initialize(
-      url: SupabaseConfig.url,
-      anonKey: SupabaseConfig.anonKey,
-    );
-  }
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class NoGlowScrollBehavior extends ScrollBehavior {
   @override
@@ -54,7 +44,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
   final _aboutKey = GlobalKey();
   final _expKey   = GlobalKey();
   final _projKey  = GlobalKey();
-  final _projectRepository = ProjectRepository();
   late Future<List<Project>> _projectsFuture;
 
   static const _experiences = [
@@ -78,7 +67,15 @@ class _PortfolioPageState extends State<PortfolioPage> {
   @override
   void initState() {
     super.initState();
-    _projectsFuture = _projectRepository.loadProjects();
+    _projectsFuture = _loadProjects();
+  }
+
+  Future<List<Project>> _loadProjects() async {
+    final raw = await rootBundle.loadString('lib/assets/projects.json');
+    final data = jsonDecode(raw) as Map<String, dynamic>;
+    return (data['projects'] as List)
+        .map((e) => Project.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   void _scrollTo(GlobalKey key) {
