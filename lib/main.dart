@@ -50,6 +50,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
     ExperienceEntry(
       title: 'Assistant Engineer @ Temasek Polytechnic',
       subtitle: 'Part-time  ·  Apr 2022 – Oct 2022',
+      imagePath: 'lib/assets/temasek_poly.jpg',
       tasks: [
         'Developed the software portion of an IoT module for students to learn connecting health sensors to the cloud and building dashboards.',
         'Provided consultation for Final Year Project students in prototyping.',
@@ -58,6 +59,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
     ExperienceEntry(
       title: 'Robotics Intern @ Weston Robot',
       subtitle: 'Internship  ·  Sep 2021 – Feb 2022',
+      imagePath: 'lib/assets/weston_robot_alt.jpg',
       tasks: [
         'Built a Flutter mobile application for interfacing with in-house robots for diagnostic purposes.',
       ],

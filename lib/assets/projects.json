@@ -14,6 +14,19 @@
         "Low cognitive load, essentials-only UI",
         "Indoor positioning and aisle selection flow",
         "Wearable form factor for hands-free use"
+      ],
+      "galleryImages": [
+        "lib/assets/pulsepath.png",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_team.jpg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_01.jpeg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_02.jpeg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_03.jpeg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_04.jpeg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_05.jpeg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_06.jpeg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_07.jpeg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_08.jpeg",
+        "lib/assets/gallery/pulsepath_safe/pulsepath_09.jpeg"
       ]
     },
     {
@@ -22,7 +35,7 @@
       "status": "completed",
       "shortDesc": "Portable, solar-assisted WBGT monitoring prototype for outdoor heat stress awareness.",
       "fullDesc": "This project focused on building a field-ready WBGT monitoring prototype powered with a compact solar panel and portable tripod setup.\n\nThe device was designed for outdoor use to support quick environmental readings where heat stress risk matters. The enclosure and mounting were iterated for stability, portability, and practical setup during on-site testing.\n\nThe final prototype combined sensing hardware, power management, and product-form considerations into a compact demonstrator that could be deployed in real-world conditions.",
-      "imagePath": "lib/assets/wbgt_solar_panel.jpg",
+      "imagePath": "lib/assets/wbgt_main_8109.jpeg",
       "techStack": ["Embedded Systems", "Solar Power", "Prototyping", "Product Design"],
       "awards": [],
       "features": [
@@ -30,6 +43,12 @@
         "Solar-assisted power for longer outdoor usage",
         "Weather-aware prototype for WBGT readings",
         "Rapid setup for field validation and demos"
+      ],
+      "galleryImages": [
+        "lib/assets/wbgt_main_8109.jpeg",
+        "lib/assets/gallery/wbgt-solar-panel/IMG_8109.jpeg",
+        "lib/assets/gallery/wbgt-solar-panel/IMG_8111.jpeg",
+        "lib/assets/gallery/wbgt-solar-panel/IMG_8116.jpeg"
       ]
     },
     {
@@ -46,6 +65,9 @@
         "Fully 3D printed structure",
         "Designed from scratch in Fusion 360",
         "Suitable for RF circuit experiments"
+      ],
+      "galleryImages": [
+        "lib/assets/capacitor.png"
       ]
     },
     {
@@ -62,6 +84,9 @@
         "3 material types compared",
         "Quantitative carbon emission modeling",
         "Policy recommendation framework"
+      ],
+      "galleryImages": [
+        "lib/assets/icecream.png"
       ]
     },
     {
@@ -82,6 +107,9 @@
         "Wireless ESP32 hardware integration",
         "Teacher mobile dashboard",
         "Low-latency signal pipeline"
+      ],
+      "galleryImages": [
+        "lib/assets/verbasense.png"
       ]
     }
   ]

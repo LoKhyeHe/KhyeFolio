@@ -23,3 +23,7 @@ flutter:
   uses-material-design: true
   assets:
     - lib/assets/
+    - lib/assets/gallery/pulsepath_safe/
+    - lib/assets/gallery/wbgt-solar-panel/
+    - lib/assets/experience/
+    - lib/assets/experience_raw/

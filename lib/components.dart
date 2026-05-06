@@ -712,6 +712,17 @@ class _TimelineItemState extends State<_TimelineItem> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: AspectRatio(
+                        aspectRatio: 16 / 8,
+                        child: Image.asset(
+                          widget.entry.imagePath,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Text(
                       widget.entry.title,
                       style: const TextStyle(

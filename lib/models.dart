@@ -8,6 +8,7 @@ class Project {
   final List<String> techStack;
   final List<String> awards;
   final List<String> features;
+  final List<String> galleryImages;
 
   const Project({
     required this.id,
@@ -19,6 +20,7 @@ class Project {
     required this.techStack,
     required this.awards,
     required this.features,
+    required this.galleryImages,
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,9 @@ class Project {
       techStack: List<String>.from(json['techStack'] as List),
       awards: List<String>.from(json['awards'] as List),
       features: List<String>.from(json['features'] as List),
+      galleryImages: json['galleryImages'] == null
+          ? const []
+          : List<String>.from(json['galleryImages'] as List),
     );
   }
 }
@@ -40,12 +45,14 @@ class ExperienceEntry {
   final String title;
   final String subtitle;
   final List<String> tasks;
+  final String imagePath;
   final bool isCurrent;
 
   const ExperienceEntry({
     required this.title,
     required this.subtitle,
     required this.tasks,
+    required this.imagePath,
     this.isCurrent = false,
   });
 }
