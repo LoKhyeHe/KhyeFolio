@@ -50,7 +50,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
     ExperienceEntry(
       title: 'Freelance @ MakeIT',
       subtitle: 'Jan 2026  ·  Current',
-      imagePath: '',
+      imagePath: 'lib/assets/makeit_logo.png',
       tasks: [
         'Educate community patrons of all ages through hands-on workshops in 3D printing and laser cutting.',
         'Maintain makerspace operations, equipment readiness, and safe workflows for daily public use.',
@@ -247,7 +247,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
               ),
               child: AnimatedTextKit(
                 animatedTexts: [
-                  TypewriterAnimatedText('Software Engineer',
+                  TypewriterAnimatedText('Builder',
                       speed: const Duration(milliseconds: 75)),
                   TypewriterAnimatedText('Maker & Entrepreneur',
                       speed: const Duration(milliseconds: 75)),
