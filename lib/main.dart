@@ -42,8 +42,8 @@ class PortfolioPage extends StatefulWidget {
 class _PortfolioPageState extends State<PortfolioPage> {
   final _scroll = ScrollController();
   final _aboutKey = GlobalKey();
-  final _expKey   = GlobalKey();
-  final _projKey  = GlobalKey();
+  final _expKey = GlobalKey();
+  final _projKey = GlobalKey();
   late Future<List<Project>> _projectsFuture;
 
   static const _experiences = [
@@ -126,11 +126,13 @@ class _PortfolioPageState extends State<PortfolioPage> {
 
           // ── Sticky glassmorphism nav ─────────────────────────────────────
           Positioned(
-            top: 0, left: 0, right: 0,
+            top: 0,
+            left: 0,
+            right: 0,
             child: GlassNav(
-              onAbout:      () => _scrollTo(_aboutKey),
+              onAbout: () => _scrollTo(_aboutKey),
               onExperience: () => _scrollTo(_expKey),
-              onProjects:   () => _scrollTo(_projKey),
+              onProjects: () => _scrollTo(_projKey),
             ),
           ),
         ],
@@ -156,51 +158,37 @@ class _PortfolioPageState extends State<PortfolioPage> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1200),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(horizontalPad, 110, horizontalPad, 56),
+                padding:
+                    EdgeInsets.fromLTRB(horizontalPad, 110, horizontalPad, 56),
                 child: isNarrow
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildHeroText(),
-                          const SizedBox(height: 36),
-                          Center(
-                            child: PulsingGlowImage(
-                              assetPath: 'lib/assets/profile.png',
-                              size: 220,
-                            ),
-                          ),
                         ],
                       )
                     : Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Left: text
-                    Expanded(
-                      flex: 6,
-                      child: _buildHeroText(),
-                    ),
-                    const SizedBox(width: 56),
-                    // Right: profile
-                    Expanded(
-                      flex: 4,
-                      child: Center(
-                        child: PulsingGlowImage(
-                          assetPath: 'lib/assets/profile.png',
-                          size: 300,
-                        ),
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Left: text
+                          Expanded(
+                            flex: 1,
+                            child: _buildHeroText(),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ),
 
           // Bouncing scroll indicator
-          if (!isNarrow) const Positioned(
-            bottom: 36, left: 0, right: 0,
-            child: Center(child: _BouncingArrow()),
-          ),
+          if (!isNarrow)
+            const Positioned(
+              bottom: 36,
+              left: 0,
+              right: 0,
+              child: Center(child: _BouncingArrow()),
+            ),
         ],
       ),
     );
@@ -229,7 +217,9 @@ class _PortfolioPageState extends State<PortfolioPage> {
         // Animated role text
         Row(
           children: [
-            Container(width: 26, height: 2,
+            Container(
+              width: 26,
+              height: 2,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [kCyan, kPurple],
@@ -282,7 +272,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
               onTap: () => _scrollTo(_projKey),
             ),
             const SizedBox(width: 14),
-            EmailButton(toAddress: 'khyehe_lo@mymail.sutd.edu.sg', label: 'Contact'),
+            EmailButton(
+                toAddress: 'khyehe_lo@mymail.sutd.edu.sg', label: 'Contact'),
           ],
         ),
         const SizedBox(height: 40),
@@ -332,7 +323,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1100),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPad, vertical: isNarrow ? 72 : 100),
+            padding: EdgeInsets.symmetric(
+                horizontal: horizontalPad, vertical: isNarrow ? 72 : 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -364,24 +356,24 @@ class _PortfolioPageState extends State<PortfolioPage> {
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                    // Image
-                    Expanded(
-                      flex: 1,
-                      child: GlowImage(
-                        assetPath: 'lib/assets/about.png',
-                        width: 320,
-                        height: 240,
-                        fit: BoxFit.cover,
-                        shadow: imageShadow,
-                      ),
-                    ),
-                    const SizedBox(width: 72),
+                          // Image
+                          Expanded(
+                            flex: 1,
+                            child: GlowImage(
+                              assetPath: 'lib/assets/about.png',
+                              width: 320,
+                              height: 240,
+                              fit: BoxFit.cover,
+                              shadow: imageShadow,
+                            ),
+                          ),
+                          const SizedBox(width: 72),
 
-                    // Text + stats
-                    Expanded(
-                      flex: 2,
-                      child: _aboutTextContent(),
-                    ),
+                          // Text + stats
+                          Expanded(
+                            flex: 2,
+                            child: _aboutTextContent(),
+                          ),
                         ],
                       ),
               ],
@@ -403,7 +395,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1100),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: horizontalPad, vertical: isNarrow ? 72 : 100),
+          padding: EdgeInsets.symmetric(
+              horizontal: horizontalPad, vertical: isNarrow ? 72 : 100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -437,7 +430,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1100),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(horizontalPad, isNarrow ? 72 : 100, horizontalPad, 56),
+                padding: EdgeInsets.fromLTRB(
+                    horizontalPad, isNarrow ? 72 : 100, horizontalPad, 56),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -449,7 +443,9 @@ class _PortfolioPageState extends State<PortfolioPage> {
                     const Text(
                       'Things I\'ve built.',
                       style: TextStyle(
-                          color: Colors.white24, fontSize: 14, letterSpacing: 0.3),
+                          color: Colors.white24,
+                          fontSize: 14,
+                          letterSpacing: 0.3),
                     ),
                   ],
                 ),
@@ -466,8 +462,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
               return const Center(
                 child: Padding(
                   padding: EdgeInsets.all(72),
-                  child: CircularProgressIndicator(
-                      color: kCyan, strokeWidth: 2),
+                  child:
+                      CircularProgressIndicator(color: kCyan, strokeWidth: 2),
                 ),
               );
             }
@@ -497,12 +493,18 @@ class _PortfolioPageState extends State<PortfolioPage> {
             height: 1,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.transparent, kCyan, kPurple, Colors.transparent],
+                colors: [
+                  Colors.transparent,
+                  kCyan,
+                  kPurple,
+                  Colors.transparent
+                ],
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 52, horizontal: horizontalPad),
+            padding:
+                EdgeInsets.symmetric(vertical: 52, horizontal: horizontalPad),
             child: Column(
               children: [
                 // Logo
@@ -595,7 +597,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
           runSpacing: 24,
           children: [
             StatBlock(value: '5', label: 'Projects'),
-            StatBlock(value: '2', label: 'Engineering Work'),
+            StatBlock(value: '3', label: 'Engineering'),
             StatBlock(value: 'STEP', label: 'Scholar'),
           ],
         ),
