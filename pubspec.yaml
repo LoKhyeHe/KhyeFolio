@@ -25,5 +25,7 @@ flutter:
     - lib/assets/
     - lib/assets/gallery/pulsepath_safe/
     - lib/assets/gallery/wbgt-solar-panel/
+    - lib/assets/gallery/vantage/
+    - lib/assets/gallery/iadl-touchscreen/
     - lib/assets/experience/
     - lib/assets/experience_raw/

@@ -45,16 +45,14 @@ class ExperienceEntry {
   final String title;
   final String subtitle;
   final List<String> tasks;
-  final String imagePath;
-  final double imageAlignmentY;
+  final List<String> imagePaths;
   final bool isCurrent;
 
   const ExperienceEntry({
     required this.title,
     required this.subtitle,
     required this.tasks,
-    required this.imagePath,
-    this.imageAlignmentY = -0.2,
+    this.imagePaths = const [],
     this.isCurrent = false,
   });
 }

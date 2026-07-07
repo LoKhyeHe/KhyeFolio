@@ -37,6 +37,13 @@ class ProjectDetailPage extends StatelessWidget {
       if (index == 0) return 'Primary WBGT project cover image.';
       return 'WBGT prototype photo from development and outdoor testing.';
     }
+    if (projectId == 'vantage') {
+      if (index == 0) return 'Vantage magnetic-wheel climbing robot render.';
+      return 'Team working on Vantage in the workshop.';
+    }
+    if (projectId == 'iadl-touchscreen') {
+      return 'IADL touchscreen assessment system in use.';
+    }
     return 'Project image ${index + 1}.';
   }
 
@@ -78,7 +85,10 @@ class ProjectDetailPage extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(project.imagePath, fit: BoxFit.cover),
+                  BlurBackedImage(
+                    assetPath: project.imagePath,
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+                  ),
                   // gradient fade to black at the bottom
                   const DecoratedBox(
                     decoration: BoxDecoration(
@@ -282,7 +292,7 @@ class ProjectDetailPage extends StatelessWidget {
                                       child: Stack(
                                         fit: StackFit.expand,
                                         children: [
-                                          Image.asset(images[index], fit: BoxFit.cover),
+                                          assetImageOrPlaceholder(images[index]),
                                           Positioned.fill(
                                             child: DecoratedBox(
                                               decoration: BoxDecoration(
@@ -422,7 +432,7 @@ class _GalleryLightboxState extends State<_GalleryLightbox> {
                       padding: const EdgeInsets.fromLTRB(18, 8, 18, 12),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(14),
-                        child: Image.asset(widget.images[i], fit: BoxFit.contain),
+                        child: assetImageOrPlaceholder(widget.images[i], fit: BoxFit.contain),
                       ),
                     ),
                   ),
@@ -493,11 +503,10 @@ class _GalleryLightboxState extends State<_GalleryLightbox> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(9),
-                      child: Image.asset(
-                        widget.images[i],
+                      child: SizedBox(
                         width: 100,
                         height: 62,
-                        fit: BoxFit.cover,
+                        child: assetImageOrPlaceholder(widget.images[i]),
                       ),
                     ),
                   ),

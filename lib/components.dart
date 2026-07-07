@@ -13,16 +13,103 @@ const kBorder  = Color(0xFF1B2740);
 const kCyan    = Color(0xFF00CCFF);
 const kPurple  = Color(0xFF8B5CF6);
 
+// ── ASSET IMAGE WITH PLACEHOLDER FALLBACK ─────────────────────────────────────
+// Falls back to a neutral placeholder when an asset hasn't been added yet,
+// instead of Flutter's default red error box.
+Widget assetImageOrPlaceholder(
+  String assetPath, {
+  BoxFit fit = BoxFit.cover,
+  Alignment alignment = Alignment.center,
+}) {
+  return Image.asset(
+    assetPath,
+    fit: fit,
+    alignment: alignment,
+    errorBuilder: (context, error, stackTrace) => Container(
+      color: kCard,
+      alignment: Alignment.center,
+      child: const Icon(Icons.image_outlined, color: Colors.white24, size: 32),
+    ),
+  );
+}
+
+// ── BLUR-BACKED IMAGE ─────────────────────────────────────────────────────────
+// Shows the full image uncropped (contain), letterboxed over a blurred,
+// dimmed copy of itself — so any aspect ratio looks intentional.
+class BlurBackedImage extends StatelessWidget {
+  final String assetPath;
+  final EdgeInsets padding;
+
+  const BlurBackedImage({
+    required this.assetPath,
+    this.padding = const EdgeInsets.all(10),
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+          child: assetImageOrPlaceholder(assetPath),
+        ),
+        Container(color: kBg.withValues(alpha: 0.55)),
+        Padding(
+          padding: padding,
+          child: assetImageOrPlaceholder(assetPath, fit: BoxFit.contain),
+        ),
+      ],
+    );
+  }
+}
+
+// ── TIMELINE IMAGE STRIP ──────────────────────────────────────────────────────
+// One or more images in a fixed-height strip; each is blur-backed so nothing
+// ever gets awkwardly cropped.
+class TimelineImageStrip extends StatelessWidget {
+  final List<String> paths;
+  final double height;
+
+  const TimelineImageStrip({
+    required this.paths,
+    this.height = 216,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: SizedBox(
+        height: height,
+        width: double.infinity,
+        child: Row(
+          children: [
+            for (int i = 0; i < paths.length; i++) ...[
+              if (i > 0) const SizedBox(width: 2),
+              Expanded(child: BlurBackedImage(assetPath: paths[i])),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ── GLASS NAV ─────────────────────────────────────────────────────────────────
 
 class GlassNav extends StatefulWidget {
   final VoidCallback onAbout;
   final VoidCallback onExperience;
+  final VoidCallback onEducation;
   final VoidCallback onProjects;
 
   const GlassNav({
     required this.onAbout,
     required this.onExperience,
+    required this.onEducation,
     required this.onProjects,
     super.key,
   });
@@ -120,6 +207,7 @@ class _GlassNavState extends State<GlassNav> {
                     children: [
                       _link('About', widget.onAbout),
                       _link('Experience', widget.onExperience),
+                      _link('Education', widget.onEducation),
                       _link('Projects', widget.onProjects),
                     ],
                   ),
@@ -213,6 +301,25 @@ class _PulsingGlowImageState extends State<PulsingGlowImage>
           height: widget.size,
           fit: BoxFit.cover,
         ),
+      ),
+    );
+  }
+}
+
+// ── GRADIENT ACCENT BAR ───────────────────────────────────────────────────────
+
+class GradientBar extends StatelessWidget {
+  final double width;
+  const GradientBar({this.width = 64, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 3,
+      width: width,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(colors: [kCyan, kPurple]),
+        borderRadius: BorderRadius.circular(2),
       ),
     );
   }
@@ -312,7 +419,7 @@ class _PortfolioButtonState extends State<PortfolioButton> {
             color: widget.filled
                 ? (_hovered ? Colors.white : kCyan)
                 : (_hovered ? kCyan.withValues(alpha: 0.10) : Colors.transparent),
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(color: kCyan, width: 1.5),
             boxShadow: widget.filled && _hovered
                 ? [BoxShadow(color: kCyan.withValues(alpha: 0.3), blurRadius: 20)]
@@ -423,7 +530,7 @@ class TechChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: kCyan.withValues(alpha: 0.07),
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: kCyan.withValues(alpha: 0.28)),
       ),
       child: Text(
@@ -705,33 +812,33 @@ class _TimelineItemState extends State<_TimelineItem> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 margin: EdgeInsets.only(bottom: widget.isLast ? 0 : 28),
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  color: _hovered ? kCard : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
+                  color: _hovered
+                      ? kCard
+                      : kCard.withValues(alpha: 0.45),
+                  borderRadius: BorderRadius.circular(18),
                   border: Border.all(
-                    color: _hovered ? kBorder : Colors.transparent,
+                    color: _hovered
+                        ? kBorder
+                        : kBorder.withValues(alpha: 0.45),
                   ),
+                  boxShadow: _hovered
+                      ? [
+                          BoxShadow(
+                            color: kCyan.withValues(alpha: 0.06),
+                            blurRadius: 28,
+                            spreadRadius: 2,
+                          ),
+                        ]
+                      : [],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.entry.imagePath.trim().isNotEmpty) ...[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: AspectRatio(
-                          aspectRatio: 16 / 6.2,
-                          child: Opacity(
-                            opacity: 0.82,
-                            child: Image.asset(
-                              widget.entry.imagePath,
-                              fit: BoxFit.cover,
-                              alignment: Alignment(0, widget.entry.imageAlignmentY),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+                    if (widget.entry.imagePaths.isNotEmpty) ...[
+                      TimelineImageStrip(paths: widget.entry.imagePaths),
+                      const SizedBox(height: 16),
                     ],
                     Text(
                       widget.entry.title,
@@ -896,7 +1003,7 @@ class _ProjectScrollItemState extends State<ProjectScrollItem> {
                   right: 0,
                   child: Transform.scale(
                     scale: imgScale,
-                    child: Image.asset(widget.project.imagePath, fit: BoxFit.cover),
+                    child: assetImageOrPlaceholder(widget.project.imagePath),
                   ),
                 ),
 
@@ -1029,7 +1136,7 @@ class _ScrollViewButtonState extends State<_ScrollViewButton> {
               color: _hovered ? kCyan : Colors.white24,
               width: 1.5,
             ),
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(10),
             color: _hovered ? kCyan.withValues(alpha: 0.10) : Colors.transparent,
           ),
           child: Row(

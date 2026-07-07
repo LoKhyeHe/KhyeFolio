@@ -43,6 +43,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
   final _scroll = ScrollController();
   final _aboutKey = GlobalKey();
   final _expKey = GlobalKey();
+  final _eduKey = GlobalKey();
   final _projKey = GlobalKey();
   late Future<List<Project>> _projectsFuture;
 
@@ -50,7 +51,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
     ExperienceEntry(
       title: 'Freelance @ MakeIT',
       subtitle: 'Jan 2026  ·  Current',
-      imagePath: 'lib/assets/makeit_logo.png',
+      imagePaths: ['lib/assets/makeit_logo.png'],
       tasks: [
         'Educate community patrons of all ages through hands-on workshops in 3D printing and laser cutting.',
         'Maintain makerspace operations, equipment readiness, and safe workflows for daily public use.',
@@ -58,21 +59,62 @@ class _PortfolioPageState extends State<PortfolioPage> {
       isCurrent: true,
     ),
     ExperienceEntry(
-      title: 'Assistant Engineer @ Temasek Polytechnic',
-      subtitle: 'Part-time  ·  Apr 2022 – Oct 2022',
-      imagePath: 'lib/assets/temasek_poly.jpg',
+      title: 'SEVEN, Treasurer (EXCO)',
+      subtitle: 'SUTD Entrepreneurship Venture & Enterprise Network  ·  Mar 2025 – Mar 2026',
+      imagePaths: [
+        'lib/assets/seven_treasurer.jpg',
+        'lib/assets/seven_workshop.jpg',
+      ],
       tasks: [
-        'Developed the software portion of an IoT module for students to learn connecting health sensors to the cloud and building dashboards.',
-        'Provided consultation for Final Year Project students in prototyping.',
+        'Managed club budgeting and programme planning.',
+        'Designed and led workshops in IoT electronics, AI, and web development.',
       ],
     ),
     ExperienceEntry(
-      title: 'Robotics Engineer @ Weston Robot',
-      subtitle: 'Engineering Role  ·  Sep 2021 – Feb 2022',
-      imagePath: 'lib/assets/weston_robot_alt.jpg',
-      imageAlignmentY: -0.5,
+      title: 'Intelligence Officer @ C4I Unit, National Service',
+      subtitle: 'Dec 2023 – Sep 2024',
+      imagePaths: ['lib/assets/national_service.jpg'],
       tasks: [
-        'Built a Flutter mobile application for interfacing with in-house robots for diagnostic purposes.',
+        'Conducted urban ISR operations with drone platforms, PTZ cameras, and VMS.',
+        'Built practical understanding of telemetry reliability, video-feed stability, and operator decision-making under field constraints.',
+      ],
+    ),
+    ExperienceEntry(
+      title: 'Software Developer @ Healthcare Engineering Centre, Temasek Polytechnic',
+      subtitle: 'Part-time  ·  May 2022 – Sep 2022',
+      imagePaths: ['lib/assets/temasek_poly.jpg'],
+      tasks: [
+        'Built biosensor data flow from flexible-PCB hardware through BLE and a database/storage layer to a Python GUI dashboard for real-time student learning.',
+      ],
+    ),
+    ExperienceEntry(
+      title: 'Software Intern @ Weston Robot (Robotics Startup)',
+      subtitle: 'Sep 2021 – Jan 2022',
+      imagePaths: ['lib/assets/experience/weston_robot_alt.jpg'],
+      tasks: [
+        'Developed a Flutter diagnostic telemetry application for UGV and robot dog platforms, monitoring power and current draw for robot health assessment; validated first on an in-house virtual simulator, then on real robots during internal trial drives.',
+        'Worked around ROS-based robot platform environments, observing ROS software architecture, telemetry interfaces, and deployment workflows alongside the engineering team.',
+      ],
+    ),
+  ];
+
+  static const _education = [
+    ExperienceEntry(
+      title: 'Singapore University of Technology and Design (SUTD)',
+      subtitle:
+          'Technology & Entrepreneurship Scholar (STEP)  ·  cGPA 4.77  ·  Sep 2024 – Apr 2029',
+      imagePaths: ['lib/assets/education_sutd.jpg'],
+      tasks: [
+        'Baby Shark Fund Recipient',
+      ],
+      isCurrent: true,
+    ),
+    ExperienceEntry(
+      title: 'Temasek Polytechnic',
+      subtitle: 'Diploma in Biomedical Engineering  ·  cGPA 3.9  ·  Apr 2019 – Apr 2021',
+      imagePaths: ['lib/assets/education_temasek.jpg'],
+      tasks: [
+        'Distinctions in Medical Electronics, Devices, Imaging & Informatics',
       ],
     ),
   ];
@@ -118,6 +160,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 _buildHero(context, size),
                 _buildAbout(context),
                 _buildExperience(context),
+                _buildEducation(context),
                 _buildProjects(context),
                 _buildFooter(context),
               ],
@@ -132,6 +175,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
             child: GlassNav(
               onAbout: () => _scrollTo(_aboutKey),
               onExperience: () => _scrollTo(_expKey),
+              onEducation: () => _scrollTo(_eduKey),
               onProjects: () => _scrollTo(_projKey),
             ),
           ),
@@ -202,14 +246,19 @@ class _PortfolioPageState extends State<PortfolioPage> {
         const SizedBox(height: 10),
 
         // Name
-        const Text(
-          'Lo\nKhye He.',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 78,
-            fontWeight: FontWeight.w900,
-            height: 1.0,
-            letterSpacing: -2.5,
+        RichText(
+          text: const TextSpan(
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 78,
+              fontWeight: FontWeight.w900,
+              height: 1.0,
+              letterSpacing: -2.5,
+            ),
+            children: [
+              TextSpan(text: 'Lo\nKhye He'),
+              TextSpan(text: '.', style: TextStyle(color: kCyan)),
+            ],
           ),
         ),
         const SizedBox(height: 22),
@@ -239,6 +288,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 animatedTexts: [
                   TypewriterAnimatedText('Builder',
                       speed: const Duration(milliseconds: 75)),
+                  TypewriterAnimatedText('Robotics & Embedded Systems',
+                      speed: const Duration(milliseconds: 75)),
                   TypewriterAnimatedText('Maker & Entrepreneur',
                       speed: const Duration(milliseconds: 75)),
                   TypewriterAnimatedText('SUTD STEP Scholar',
@@ -254,7 +305,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
 
         // Bio
         const Text(
-          'Engineering solutions that matter.\nCurrently at SUTD under the STEP Scholarship Programme.',
+          'Building UWB navigation, robot telemetry, and embedded systems.\nComputer Engineering @ SUTD, STEP Scholar (cGPA 4.77).',
           style: TextStyle(
               color: Colors.white38,
               fontSize: 15,
@@ -334,7 +385,9 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 const SectionLabel('01  /  ABOUT'),
                 const SizedBox(height: 14),
                 const Text('About Me', style: _h2),
-                const SizedBox(height: 56),
+                const SizedBox(height: 18),
+                const GradientBar(),
+                const SizedBox(height: 48),
 
                 isNarrow
                     ? Column(
@@ -404,9 +457,45 @@ class _PortfolioPageState extends State<PortfolioPage> {
               const SectionLabel('02  /  EXPERIENCE'),
               const SizedBox(height: 14),
               const Text('Experience', style: _h2),
-              const SizedBox(height: 56),
+              const SizedBox(height: 18),
+              const GradientBar(),
+              const SizedBox(height: 48),
               ExperienceTimeline(entries: _experiences),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── EDUCATION ──────────────────────────────────────────────────────────────
+
+  Widget _buildEducation(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isNarrow = width < 980;
+    final horizontalPad = isNarrow ? 24.0 : 56.0;
+
+    return Container(
+      color: kSurface,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: horizontalPad, vertical: isNarrow ? 72 : 100),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(key: _eduKey, height: 0),
+                const SectionLabel('03  /  EDUCATION'),
+                const SizedBox(height: 14),
+                const Text('Education', style: _h2),
+                const SizedBox(height: 18),
+                const GradientBar(),
+                const SizedBox(height: 48),
+                ExperienceTimeline(entries: _education),
+              ],
+            ),
           ),
         ),
       ),
@@ -436,10 +525,12 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(key: _projKey, height: 0),
-                    const SectionLabel('03  /  PROJECTS'),
+                    const SectionLabel('04  /  PROJECTS'),
                     const SizedBox(height: 14),
                     const Text('Projects', style: _h2),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 18),
+                    const GradientBar(),
+                    const SizedBox(height: 16),
                     const Text(
                       'Things I\'ve built.',
                       style: TextStyle(
@@ -559,7 +650,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 const SizedBox(height: 24),
 
                 Text(
-                  '© 2024 Lo Khye He  ·  Built with Flutter',
+                  '© ${DateTime.now().year} Lo Khye He  ·  Built with Flutter',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.18),
                     fontSize: 12,
@@ -583,8 +674,10 @@ class _PortfolioPageState extends State<PortfolioPage> {
           'resulting in the loss of one of his stationery before his exam. '
           'On that day I learned two things: the pain of a cane and how gears work.\n\n'
           'Today, I am passionate about engineering and problem solving as an '
-          'aspiring entrepreneur. I\'m currently pursuing my degree in SUTD '
-          'under the STEP Scholarship Programme.',
+          'aspiring entrepreneur. I\'m currently pursuing Computer Engineering at '
+          'SUTD under the STEP Scholarship Programme (cGPA 4.77), with hands-on '
+          'experience across localisation and navigation, robot telemetry, '
+          'embedded electronics, and applied AI.',
           style: TextStyle(
             color: Colors.white54,
             fontSize: 15,
@@ -596,8 +689,9 @@ class _PortfolioPageState extends State<PortfolioPage> {
           spacing: 40,
           runSpacing: 24,
           children: [
-            StatBlock(value: '5', label: 'Projects'),
-            StatBlock(value: '3', label: 'Engineering'),
+            StatBlock(value: '6', label: 'Projects'),
+            StatBlock(value: '4.77', label: 'cGPA'),
+            StatBlock(value: '5', label: 'Experiences'),
             StatBlock(value: 'STEP', label: 'Scholar'),
           ],
         ),

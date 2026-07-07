@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Raw asset staging folders (not bundled into the app; source photos/videos
+# live here before being processed into lib/assets/)
+/Experience Folder /
+/Projects Folder/
+/Education Folder/
