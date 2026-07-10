@@ -1,19 +1,40 @@
 {
   "projects": [
     {
-      "id": "pulsepath",
-      "title": "PulsePath",
-      "status": "improving",
-      "shortDesc": "Ongoing indoor navigation system using haptic guidance for visually impaired users, developed in collaboration with TechAble, SAVH, and AWWA.",
-      "fullDesc": "PulsePath is an ongoing assistive indoor navigation initiative designed to help visually impaired users move through complex spaces with confidence.\n\nDeveloped in collaboration with TechAble, SAVH, and AWWA, the project combines a wearable haptic device with an essentials-first mobile interface. Directional pulse cues are used to reduce cognitive load while moving, so users can focus on safe navigation instead of reading dense on-screen information.\n\nThe current prototype explores practical deployment in supermarket-like layouts, including aisle-level guidance and indoor positioning logic for step-by-step movement support.",
-      "imagePath": "lib/assets/pulsepath.png",
-      "techStack": ["Product Design", "Assistive Tech", "Haptic Feedback", "Mobile UX"],
+      "id": "vantage",
+      "title": "Vantage: Magnetic-Wheel Lamppost-Climbing Surveillance Robot",
+      "status": "ongoing",
+      "shortDesc": "Ongoing magnetic-wheel robot built to ascend lampposts and stream live surveillance video, developed with 15C4I and the Singapore Police Force (SPF).",
+      "fullDesc": "Vantage is an ongoing robotics project developed in collaboration with 15C4I and the Singapore Police Force (SPF), built around a magnetic-wheel platform designed to climb lampposts and stream live surveillance video from height.\n\nMy contribution focuses on the electrical side of the climbing system: battery management, power distribution, and the N20 motor-control architecture that keeps the robot climbing reliably under load.\n\nThe project is still in active development, with ongoing iteration on power efficiency and climbing stability.",
+      "imagePath": "lib/assets/vantage.png",
+      "techStack": ["Battery Management", "Power Distribution", "N20 Motor Control", "Embedded Systems", "Robotics"],
       "awards": [],
       "features": [
-        "Clear directional haptic pulse guidance",
-        "Low cognitive load, essentials-only UI",
-        "Indoor positioning and aisle selection flow",
-        "Wearable form factor for hands-free use"
+        "Magnetic-wheel drive for vertical lamppost climbing",
+        "Live surveillance video streaming from height",
+        "Battery management and power distribution design",
+        "N20 motor-control architecture for reliable climbing operation"
+      ],
+      "galleryImages": [
+        "lib/assets/vantage.png",
+        "lib/assets/gallery/vantage/vantage_workshop.jpeg"
+      ]
+    },
+    {
+      "id": "pulsepath",
+      "title": "PulsePath",
+      "status": "ongoing",
+      "shortDesc": "Ongoing indoor navigation system for the visually impaired, combining UWB trilateration, A* pathfinding, and vibration-belt directional cues. Led a 6-person team.",
+      "fullDesc": "PulsePath is an ongoing assistive indoor navigation initiative designed to help visually impaired users move through complex spaces with confidence.\n\nAs project lead of a 6-person team, I helped implement UWB trilateration using dual body-mounted modules for orientation estimation, paired with A* pathfinding for real-time route guidance on mobile. A vibration belt delivers directional cues so users can navigate hands-free without needing to read dense on-screen information.\n\nOn the hardware side, I designed and fabricated a custom motor-driver PCB, and built a Flutter-based operator interface that gives real-time positional feedback during trials.",
+      "imagePath": "lib/assets/pulsepath.png",
+      "techStack": ["UWB Trilateration", "A* Pathfinding", "Flutter", "PCB Design", "Assistive Tech"],
+      "awards": [],
+      "features": [
+        "UWB trilateration with dual body-mounted modules for orientation estimation",
+        "A* pathfinding for real-time mobile route guidance",
+        "Vibration-belt directional cues for hands-free navigation",
+        "Custom motor-driver PCB design and fabrication",
+        "Flutter operator interface with real-time positional feedback"
       ],
       "galleryImages": [
         "lib/assets/pulsepath.png",
@@ -33,8 +54,8 @@
       "id": "wbgt-solar-panel",
       "title": "WBGT Solar Panel Monitor",
       "status": "completed",
-      "shortDesc": "Portable, solar-assisted WBGT monitoring prototype for outdoor heat stress awareness, including potential military field applications.",
-      "fullDesc": "This project focused on building a field-ready WBGT monitoring prototype powered with a compact solar panel and portable tripod setup.\n\nThe device was designed for outdoor use to support quick environmental readings where heat stress risk matters. This includes potential military field applications where personnel need fast, reliable heat stress indicators during prolonged operations.\n\nThe enclosure and mounting were iterated for stability, portability, and practical setup during on-site testing. The final prototype combined sensing hardware, power management, and product-form considerations into a compact demonstrator that could be deployed in real-world conditions.",
+      "shortDesc": "Portable, solar-assisted WBGT monitoring prototype for outdoor heat stress awareness, sized for standalone Army field sensor deployment.",
+      "fullDesc": "This project focused on building a field-ready WBGT monitoring prototype powered with a compact solar panel and portable tripod setup.\n\nThe device was designed for outdoor use to support quick environmental readings where heat stress risk matters. I sized the solar-LiPo power system specifically for standalone Army field sensor deployment, where personnel need fast, reliable heat stress indicators during prolonged operations without access to mains power.\n\nThe enclosure and mounting were iterated for stability, portability, and practical setup during on-site testing. The final prototype combined sensing hardware, power management, and product-form considerations into a compact demonstrator that could be deployed in real-world conditions.",
       "imagePath": "lib/assets/wbgt_main_8109.jpeg",
       "techStack": ["Embedded Systems", "Solar Power", "Prototyping", "Product Design"],
       "awards": [],
@@ -49,44 +70,6 @@
         "lib/assets/gallery/wbgt-solar-panel/IMG_8109.jpeg",
         "lib/assets/gallery/wbgt-solar-panel/IMG_8111.jpeg",
         "lib/assets/gallery/wbgt-solar-panel/IMG_8116.jpeg"
-      ]
-    },
-    {
-      "id": "capacitor",
-      "title": "DIY Variable Capacitor",
-      "status": "completed",
-      "shortDesc": "Custom disk-style variable capacitor designed and 3D printed using Fusion 360.",
-      "fullDesc": "A disk-style variable capacitor designed entirely in Fusion 360 and fabricated using additive manufacturing techniques.\n\nThe design allows capacitance to be adjusted mechanically by rotating the disk array, enabling fine-tuned control for use in electronics experiments and RF circuits. Every component was designed from scratch with precise tolerances to ensure reliable electrical performance.\n\nThis project was an exploration into bridging mechanical design with electrical engineering fundamentals.",
-      "imagePath": "lib/assets/capacitor.png",
-      "techStack": ["Fusion 360", "3D Printing", "Electronics"],
-      "awards": [],
-      "features": [
-        "Adjustable capacitance via disk rotation",
-        "Fully 3D printed structure",
-        "Designed from scratch in Fusion 360",
-        "Suitable for RF circuit experiments"
-      ],
-      "galleryImages": [
-        "lib/assets/capacitor.png"
-      ]
-    },
-    {
-      "id": "icecream",
-      "title": "Battle of the Ice Cream Cup",
-      "status": "completed",
-      "shortDesc": "Lifecycle analysis comparing environmental impact of different ice cream cup materials.",
-      "fullDesc": "A comprehensive lifecycle analysis (LCA) comparing the environmental footprint of paper, plastic, and biodegradable ice cream cup alternatives.\n\nThe study evaluated each material from raw material extraction through production, use, and disposal — considering energy consumption, carbon emissions, and waste generation across each stage.\n\nFindings revealed nuanced trade-offs: biodegradable alternatives are not always the most eco-friendly option depending on regional waste infrastructure, consumer behavior, and end-of-life processing.",
-      "imagePath": "lib/assets/icecream.png",
-      "techStack": ["Research", "LCA Methodology", "Data Analysis"],
-      "awards": [],
-      "features": [
-        "Cradle-to-grave lifecycle analysis",
-        "3 material types compared",
-        "Quantitative carbon emission modeling",
-        "Policy recommendation framework"
-      ],
-      "galleryImages": [
-        "lib/assets/icecream.png"
       ]
     },
     {
@@ -110,6 +93,44 @@
       ],
       "galleryImages": [
         "lib/assets/verbasense.png"
+      ]
+    },
+    {
+      "id": "capacitor",
+      "title": "DIY Variable Capacitor",
+      "status": "completed",
+      "shortDesc": "Custom disk-style variable capacitor designed and 3D printed using Fusion 360.",
+      "fullDesc": "A disk-style variable capacitor designed entirely in Fusion 360 and fabricated using additive manufacturing techniques.\n\nThe design allows capacitance to be adjusted mechanically by rotating the disk array, enabling fine-tuned control for use in electronics experiments and RF circuits. Every component was designed from scratch with precise tolerances to ensure reliable electrical performance.\n\nThis project was an exploration into bridging mechanical design with electrical engineering fundamentals.",
+      "imagePath": "lib/assets/capacitor.png",
+      "techStack": ["Fusion 360", "3D Printing", "Electronics"],
+      "awards": [],
+      "features": [
+        "Adjustable capacitance via disk rotation",
+        "Fully 3D printed structure",
+        "Designed from scratch in Fusion 360",
+        "Suitable for RF circuit experiments"
+      ],
+      "galleryImages": [
+        "lib/assets/capacitor.png"
+      ]
+    },
+    {
+      "id": "iadl-touchscreen",
+      "title": "IADL Touchscreen Assessment System",
+      "status": "completed",
+      "shortDesc": "Projector-camera vision system for a touchscreen interface simulating IADL tasks, capturing interaction data via a force sensor glove.",
+      "fullDesc": "This project built a projector-camera vision system driving a touchscreen-style interface for simulating Instrumental Activities of Daily Living (IADL) tasks, such as table wiping, for clinical assessment purposes.\n\nA force sensor glove captured interaction data during task performance, giving therapists and researchers quantitative insight into a patient's movement and force application alongside the projected interface.\n\nThe work contributed to a provisional patent filing.",
+      "imagePath": "lib/assets/iadl_touchscreen.jpg",
+      "techStack": ["Computer Vision", "Projector-Camera Systems", "Force Sensing", "Embedded Systems"],
+      "awards": ["Contributed to Provisional Patent"],
+      "features": [
+        "Projector-camera vision system for touchscreen task simulation",
+        "Force sensor glove for quantitative interaction data capture",
+        "IADL task simulation (e.g. table wiping) for clinical assessment",
+        "Contributed to a provisional patent filing"
+      ],
+      "galleryImages": [
+        "lib/assets/iadl_touchscreen.jpg"
       ]
     }
   ]

@@ -6,6 +6,18 @@
       "runtimeExecutable": "flutter",
       "runtimeArgs": ["run", "-d", "chrome", "--web-port", "8765"],
       "port": 8765
+    },
+    {
+      "name": "flutter-web-build",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8766", "--directory", "build/web"],
+      "port": 8766
+    },
+    {
+      "name": "github-pages-docs",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8767", "--directory", "/private/tmp/claude-501/-Users-khlo-Desktop-Flutter-Projects-KhyeFolio/5e5655bf-2831-425a-9d6e-bd3e43f3a3eb/scratchpad/pages_root"],
+      "port": 8767
     }
   ]
 }
