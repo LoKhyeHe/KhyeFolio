@@ -49,9 +49,11 @@ class _PortfolioPageState extends State<PortfolioPage> {
 
   static const _experiences = [
     ExperienceEntry(
+      id: 'makeit',
       title: 'Freelance @ MakeIT',
       subtitle: 'Jan 2026  ·  Current',
       imagePaths: ['lib/assets/makeit_logo.png'],
+      galleryImages: ['lib/assets/makeit_logo.png'],
       tasks: [
         'Educate community patrons of all ages through hands-on workshops in 3D printing and laser cutting.',
         'Maintain makerspace operations, equipment readiness, and safe workflows for daily public use.',
@@ -59,9 +61,15 @@ class _PortfolioPageState extends State<PortfolioPage> {
       isCurrent: true,
     ),
     ExperienceEntry(
+      id: 'seven',
       title: 'SEVEN, Treasurer (EXCO)',
-      subtitle: 'SUTD Entrepreneurship Venture & Enterprise Network  ·  Mar 2025 – Mar 2026',
+      subtitle:
+          'SUTD Entrepreneurship Venture & Enterprise Network  ·  Mar 2025 – Mar 2026',
       imagePaths: [
+        'lib/assets/seven_treasurer.jpg',
+        'lib/assets/seven_workshop.jpg',
+      ],
+      galleryImages: [
         'lib/assets/seven_treasurer.jpg',
         'lib/assets/seven_workshop.jpg',
       ],
@@ -71,26 +79,41 @@ class _PortfolioPageState extends State<PortfolioPage> {
       ],
     ),
     ExperienceEntry(
+      id: 'national-service',
       title: 'Intelligence Officer @ C4I Unit, National Service',
       subtitle: 'Dec 2023 – Sep 2024',
       imagePaths: ['lib/assets/national_service.jpg'],
+      galleryImages: [
+        'lib/assets/national_service.jpg',
+        'lib/assets/national_service_team.jpg',
+      ],
       tasks: [
         'Conducted urban ISR operations with drone platforms, PTZ cameras, and VMS.',
         'Built practical understanding of telemetry reliability, video-feed stability, and operator decision-making under field constraints.',
       ],
     ),
     ExperienceEntry(
-      title: 'Software Developer @ Healthcare Engineering Centre, Temasek Polytechnic',
+      id: 'healthcare-engineering-centre',
+      title:
+          'Software Developer @ Healthcare Engineering Centre, Temasek Polytechnic',
       subtitle: 'Part-time  ·  May 2022 – Sep 2022',
       imagePaths: ['lib/assets/temasek_poly.jpg'],
+      galleryImages: ['lib/assets/temasek_poly.jpg'],
       tasks: [
         'Built biosensor data flow from flexible-PCB hardware through BLE and a database/storage layer to a Python GUI dashboard for real-time student learning.',
       ],
     ),
     ExperienceEntry(
+      id: 'weston-robot',
       title: 'Software Intern @ Weston Robot (Robotics Startup)',
       subtitle: 'Sep 2021 – Jan 2022',
       imagePaths: ['lib/assets/experience/weston_robot_alt.jpg'],
+      galleryImages: [
+        'lib/assets/experience/weston_robot_alt.jpg',
+        'lib/assets/weston_robot_team.jpg',
+        'lib/assets/weston_robot_field.jpg',
+        'lib/assets/experience/weston_robot_group.jpg',
+      ],
       tasks: [
         'Developed a Flutter diagnostic telemetry application for UGV and robot dog platforms, monitoring power and current draw for robot health assessment; validated first on an in-house virtual simulator, then on real robots during internal trial drives.',
         'Worked around ROS-based robot platform environments, observing ROS software architecture, telemetry interfaces, and deployment workflows alongside the engineering team.',
@@ -100,19 +123,24 @@ class _PortfolioPageState extends State<PortfolioPage> {
 
   static const _education = [
     ExperienceEntry(
+      id: 'sutd',
       title: 'Singapore University of Technology and Design (SUTD)',
       subtitle:
           'Technology & Entrepreneurship Scholar (STEP)  ·  cGPA 4.77  ·  Sep 2024 – Apr 2029',
       imagePaths: ['lib/assets/education_sutd.jpg'],
+      galleryImages: ['lib/assets/education_sutd.jpg'],
       tasks: [
         'Baby Shark Fund Recipient',
       ],
       isCurrent: true,
     ),
     ExperienceEntry(
+      id: 'temasek-polytechnic',
       title: 'Temasek Polytechnic',
-      subtitle: 'Diploma in Biomedical Engineering  ·  cGPA 3.9  ·  Apr 2019 – Apr 2021',
+      subtitle:
+          'Diploma in Biomedical Engineering  ·  cGPA 3.9  ·  Apr 2019 – Apr 2021',
       imagePaths: ['lib/assets/education_temasek.jpg'],
+      galleryImages: ['lib/assets/education_temasek.jpg'],
       tasks: [
         'Distinctions in Medical Electronics, Devices, Imaging & Informatics',
       ],
@@ -493,7 +521,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 const SizedBox(height: 18),
                 const GradientBar(),
                 const SizedBox(height: 48),
-                ExperienceTimeline(entries: _education),
+                ExperienceTimeline(entries: _education, sectionLabel: 'Education'),
               ],
             ),
           ),

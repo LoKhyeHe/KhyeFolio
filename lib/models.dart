@@ -42,17 +42,21 @@ class Project {
 }
 
 class ExperienceEntry {
+  final String id;
   final String title;
   final String subtitle;
   final List<String> tasks;
   final List<String> imagePaths;
+  final List<String> galleryImages;
   final bool isCurrent;
 
   const ExperienceEntry({
+    required this.id,
     required this.title,
     required this.subtitle,
     required this.tasks,
     this.imagePaths = const [],
+    this.galleryImages = const [],
     this.isCurrent = false,
   });
 }

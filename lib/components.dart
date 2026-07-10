@@ -4,14 +4,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:term_summary/models.dart';
 import 'package:term_summary/pages/project_detail.dart';
+import 'package:term_summary/pages/experience_detail.dart';
 
 // ── DESIGN TOKENS ─────────────────────────────────────────────────────────────
-const kBg      = Color(0xFF060810);
+const kBg = Color(0xFF060810);
 const kSurface = Color(0xFF0C111A);
-const kCard    = Color(0xFF101724);
-const kBorder  = Color(0xFF1B2740);
-const kCyan    = Color(0xFF00CCFF);
-const kPurple  = Color(0xFF8B5CF6);
+const kCard = Color(0xFF101724);
+const kBorder = Color(0xFF1B2740);
+const kCyan = Color(0xFF00CCFF);
+const kPurple = Color(0xFF8B5CF6);
 
 // ── ASSET IMAGE WITH PLACEHOLDER FALLBACK ─────────────────────────────────────
 // Falls back to a neutral placeholder when an asset hasn't been added yet,
@@ -418,11 +419,16 @@ class _PortfolioButtonState extends State<PortfolioButton> {
           decoration: BoxDecoration(
             color: widget.filled
                 ? (_hovered ? Colors.white : kCyan)
-                : (_hovered ? kCyan.withValues(alpha: 0.10) : Colors.transparent),
+                : (_hovered
+                    ? kCyan.withValues(alpha: 0.10)
+                    : Colors.transparent),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: kCyan, width: 1.5),
             boxShadow: widget.filled && _hovered
-                ? [BoxShadow(color: kCyan.withValues(alpha: 0.3), blurRadius: 20)]
+                ? [
+                    BoxShadow(
+                        color: kCyan.withValues(alpha: 0.3), blurRadius: 20)
+                  ]
                 : [],
           ),
           child: Text(
@@ -467,10 +473,345 @@ class GlowImage extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child:
-              Image.asset(assetPath, width: width, height: height, fit: fit),
+          child: Image.asset(assetPath, width: width, height: height, fit: fit),
         ),
       );
+}
+
+// ── DETAIL SECTION (used by project/experience detail pages) ─────────────────
+
+class DetailSection extends StatelessWidget {
+  final String label;
+  final Widget child;
+
+  const DetailSection({required this.label, required this.child, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.cyanAccent,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.8,
+          ),
+        ),
+        const SizedBox(height: 14),
+        child,
+      ],
+    );
+  }
+}
+
+// ── GALLERY GRID + LIGHTBOX (used by project/experience detail pages) ────────
+
+typedef GalleryCaptionBuilder = String Function(String imagePath, int index);
+
+class GalleryGrid extends StatelessWidget {
+  final String title;
+  final List<String> images;
+  final GalleryCaptionBuilder captionFor;
+
+  const GalleryGrid({
+    required this.title,
+    required this.images,
+    required this.captionFor,
+    super.key,
+  });
+
+  void _openGallery(BuildContext context, int initialIndex) {
+    final captions = List<String>.generate(
+      images.length,
+      (i) => captionFor(images[i], i),
+    );
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.90),
+      builder: (_) => GalleryLightbox(
+        title: title,
+        images: images,
+        captions: captions,
+        initialIndex: initialIndex,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: kCard.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white12),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isNarrow = constraints.maxWidth < 700;
+          final cardWidth =
+              isNarrow ? constraints.maxWidth : (constraints.maxWidth - 16) / 2;
+          return Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: List.generate(images.length, (index) {
+              final big = index == 0;
+              final height = big ? 240.0 : 180.0;
+              return GestureDetector(
+                onTap: () => _openGallery(context, index),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Container(
+                    width: big && !isNarrow ? constraints.maxWidth : cardWidth,
+                    height: height,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.15),
+                      ),
+                    ),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        assetImageOrPlaceholder(images[index]),
+                        Positioned.fill(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.55),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 12,
+                          right: 12,
+                          bottom: 10,
+                          child: Text(
+                            captionFor(images[index], index),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class GalleryLightbox extends StatefulWidget {
+  final String title;
+  final List<String> images;
+  final List<String> captions;
+  final int initialIndex;
+
+  const GalleryLightbox({
+    required this.title,
+    required this.images,
+    required this.captions,
+    required this.initialIndex,
+    super.key,
+  });
+
+  @override
+  State<GalleryLightbox> createState() => _GalleryLightboxState();
+}
+
+class _GalleryLightboxState extends State<GalleryLightbox> {
+  late final PageController _pageController;
+  late int _index;
+
+  @override
+  void initState() {
+    super.initState();
+    _index = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: const EdgeInsets.all(24),
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 1100, maxHeight: 760),
+        decoration: BoxDecoration(
+          color: kSurface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.45),
+              blurRadius: 32,
+              spreadRadius: 6,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 12, 10, 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${widget.title}  ·  Gallery',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: widget.images.length,
+                    onPageChanged: (value) => setState(() => _index = value),
+                    itemBuilder: (_, i) => Padding(
+                      padding: const EdgeInsets.fromLTRB(18, 8, 18, 12),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: assetImageOrPlaceholder(widget.images[i],
+                            fit: BoxFit.contain),
+                      ),
+                    ),
+                  ),
+                  if (widget.images.length > 1) ...[
+                    Positioned(
+                      left: 12,
+                      child: _galleryArrow(
+                        icon: Icons.chevron_left,
+                        onTap: () => _pageController.previousPage(
+                          duration: const Duration(milliseconds: 240),
+                          curve: Curves.easeOut,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 12,
+                      child: _galleryArrow(
+                        icon: Icons.chevron_right,
+                        onTap: () => _pageController.nextPage(
+                          duration: const Duration(milliseconds: 240),
+                          curve: Curves.easeOut,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  widget.captions[_index],
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 78,
+              child: ListView.separated(
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.images.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                itemBuilder: (_, i) => GestureDetector(
+                  onTap: () {
+                    _pageController.animateToPage(
+                      i,
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOut,
+                    );
+                    setState(() => _index = i);
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: i == _index ? kCyan : Colors.white24,
+                        width: i == _index ? 1.8 : 1.0,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(9),
+                      child: SizedBox(
+                        width: 100,
+                        height: 62,
+                        child: assetImageOrPlaceholder(widget.images[i]),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _galleryArrow({required IconData icon, required VoidCallback onTap}) {
+    return Material(
+      color: Colors.black.withValues(alpha: 0.35),
+      borderRadius: BorderRadius.circular(99),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(99),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Icon(icon, color: Colors.white70, size: 28),
+        ),
+      ),
+    );
+  }
 }
 
 // ── STATUS BADGE ──────────────────────────────────────────────────────────────
@@ -586,7 +927,8 @@ class _SocialItemState extends State<SocialItem> {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _hovered ? kCyan.withValues(alpha: 0.12) : Colors.transparent,
+            color:
+                _hovered ? kCyan.withValues(alpha: 0.12) : Colors.transparent,
             border: Border.all(
               color: _hovered ? kCyan.withValues(alpha: 0.5) : Colors.white12,
             ),
@@ -625,8 +967,7 @@ class EmailButton extends StatelessWidget {
       barrierColor: Colors.black.withValues(alpha: 0.6),
       builder: (context) => Dialog(
         backgroundColor: kCard,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 500),
           child: Padding(
@@ -664,7 +1005,8 @@ class EmailButton extends StatelessWidget {
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Email address is not configured yet.'),
+                              content:
+                                  Text('Email address is not configured yet.'),
                             ),
                           );
                           Navigator.pop(context);
@@ -730,14 +1072,23 @@ class EmailButton extends StatelessWidget {
 
 class ExperienceTimeline extends StatelessWidget {
   final List<ExperienceEntry> entries;
-  const ExperienceTimeline({required this.entries, super.key});
+  final String sectionLabel;
+  const ExperienceTimeline({
+    required this.entries,
+    this.sectionLabel = 'Experience',
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: List.generate(
         entries.length,
-        (i) => _TimelineItem(entry: entries[i], isLast: i == entries.length - 1),
+        (i) => _TimelineItem(
+          entry: entries[i],
+          isLast: i == entries.length - 1,
+          sectionLabel: sectionLabel,
+        ),
       ),
     );
   }
@@ -746,7 +1097,12 @@ class ExperienceTimeline extends StatelessWidget {
 class _TimelineItem extends StatefulWidget {
   final ExperienceEntry entry;
   final bool isLast;
-  const _TimelineItem({required this.entry, required this.isLast});
+  final String sectionLabel;
+  const _TimelineItem({
+    required this.entry,
+    required this.isLast,
+    required this.sectionLabel,
+  });
 
   @override
   State<_TimelineItem> createState() => _TimelineItemState();
@@ -760,139 +1116,187 @@ class _TimelineItemState extends State<_TimelineItem> {
     final dotColor = widget.entry.isCurrent ? kCyan : Colors.white30;
 
     return MouseRegion(
+      cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Spine
-            SizedBox(
-              width: 24,
-              child: Column(
-                children: [
-                  const SizedBox(height: 5),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: dotColor,
-                      shape: BoxShape.circle,
-                      boxShadow: widget.entry.isCurrent
-                          ? [BoxShadow(color: kCyan.withValues(alpha: 0.5), blurRadius: 8, spreadRadius: 2)]
-                          : [],
+      child: GestureDetector(
+        onTap: () => Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => ExperienceDetailPage(
+              entry: widget.entry,
+              sectionLabel: widget.sectionLabel,
+            ),
+            transitionsBuilder: (_, a, __, child) =>
+                FadeTransition(opacity: a, child: child),
+          ),
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Spine
+              SizedBox(
+                width: 24,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: dotColor,
+                        shape: BoxShape.circle,
+                        boxShadow: widget.entry.isCurrent
+                            ? [
+                                BoxShadow(
+                                    color: kCyan.withValues(alpha: 0.5),
+                                    blurRadius: 8,
+                                    spreadRadius: 2)
+                              ]
+                            : [],
+                      ),
                     ),
-                  ),
-                  if (!widget.isLast)
-                    Expanded(
-                      child: Center(
-                        child: Container(
-                          width: 1,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.white.withValues(alpha: 0.12),
-                                Colors.transparent,
-                              ],
+                    if (!widget.isLast)
+                      Expanded(
+                        child: Center(
+                          child: Container(
+                            width: 1,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.white.withValues(alpha: 0.12),
+                                  Colors.transparent,
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-            ),
-
-            const SizedBox(width: 20),
-
-            // Content card
-            Expanded(
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                margin: EdgeInsets.only(bottom: widget.isLast ? 0 : 28),
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  color: _hovered
-                      ? kCard
-                      : kCard.withValues(alpha: 0.45),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: _hovered
-                        ? kBorder
-                        : kBorder.withValues(alpha: 0.45),
-                  ),
-                  boxShadow: _hovered
-                      ? [
-                          BoxShadow(
-                            color: kCyan.withValues(alpha: 0.06),
-                            blurRadius: 28,
-                            spreadRadius: 2,
-                          ),
-                        ]
-                      : [],
+                  ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (widget.entry.imagePaths.isNotEmpty) ...[
-                      TimelineImageStrip(paths: widget.entry.imagePaths),
-                      const SizedBox(height: 16),
-                    ],
-                    Text(
-                      widget.entry.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+              ),
+
+              const SizedBox(width: 20),
+
+              // Content card
+              Expanded(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: EdgeInsets.only(bottom: widget.isLast ? 0 : 28),
+                  padding: const EdgeInsets.all(22),
+                  decoration: BoxDecoration(
+                    color: _hovered ? kCard : kCard.withValues(alpha: 0.45),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: _hovered
+                          ? kCyan.withValues(alpha: 0.35)
+                          : kBorder.withValues(alpha: 0.45),
+                    ),
+                    boxShadow: _hovered
+                        ? [
+                            BoxShadow(
+                              color: kCyan.withValues(alpha: 0.10),
+                              blurRadius: 28,
+                              spreadRadius: 2,
+                            ),
+                          ]
+                        : [],
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget.entry.imagePaths.isNotEmpty) ...[
+                            TimelineImageStrip(paths: widget.entry.imagePaths),
+                            const SizedBox(height: 16),
+                          ],
+                          Text(
+                            widget.entry.title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            widget.entry.subtitle,
+                            style: const TextStyle(
+                                color: Colors.white38,
+                                fontSize: 12,
+                                letterSpacing: 0.3),
+                          ),
+                          if (widget.entry.tasks.isNotEmpty) ...[
+                            const SizedBox(height: 14),
+                            ...widget.entry.tasks.map(
+                              (t) => Padding(
+                                padding: const EdgeInsets.only(bottom: 7),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 6),
+                                      child: Container(
+                                        width: 4,
+                                        height: 4,
+                                        decoration: BoxDecoration(
+                                          color: kCyan.withValues(alpha: 0.6),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        t,
+                                        style: const TextStyle(
+                                          color: Colors.white54,
+                                          fontSize: 13,
+                                          height: 1.6,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      widget.entry.subtitle,
-                      style: const TextStyle(color: Colors.white38, fontSize: 12, letterSpacing: 0.3),
-                    ),
-                    if (widget.entry.tasks.isNotEmpty) ...[
-                      const SizedBox(height: 14),
-                      ...widget.entry.tasks.map(
-                        (t) => Padding(
-                          padding: const EdgeInsets.only(bottom: 7),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: _hovered ? 1 : 0,
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 6),
-                                child: Container(
-                                  width: 4,
-                                  height: 4,
-                                  decoration: BoxDecoration(
-                                    color: kCyan.withValues(alpha: 0.6),
-                                    shape: BoxShape.circle,
-                                  ),
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Text(
+                                'View details',
+                                style: TextStyle(
+                                  color: kCyan,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.3,
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  t,
-                                  style: const TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: 13,
-                                    height: 1.6,
-                                  ),
-                                ),
-                              ),
+                              SizedBox(width: 4),
+                              Icon(Icons.arrow_forward, color: kCyan, size: 13),
                             ],
                           ),
                         ),
                       ),
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -983,7 +1387,8 @@ class _ProjectScrollItemState extends State<ProjectScrollItem> {
     final opacity = curved;
     final parallax = (_progress - 0.5) * 80;
     final imgScale = 1.05 + (0.08 * _progress).clamp(0.0, 0.08);
-    final numStr = widget.index < 9 ? '0${widget.index + 1}' : '${widget.index + 1}';
+    final numStr =
+        widget.index < 9 ? '0${widget.index + 1}' : '${widget.index + 1}';
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -1011,8 +1416,12 @@ class _ProjectScrollItemState extends State<ProjectScrollItem> {
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: _fromLeft ? Alignment.centerLeft : Alignment.centerRight,
-                      end: _fromLeft ? Alignment.centerRight : Alignment.centerLeft,
+                      begin: _fromLeft
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
+                      end: _fromLeft
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
                       stops: const [0.0, 0.40, 0.68, 1.0],
                       colors: [
                         kBg.withValues(alpha: 0.96),
@@ -1038,8 +1447,9 @@ class _ProjectScrollItemState extends State<ProjectScrollItem> {
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment:
-                              _fromLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+                          crossAxisAlignment: _fromLeft
+                              ? CrossAxisAlignment.start
+                              : CrossAxisAlignment.end,
                           children: [
                             Text(
                               numStr,
@@ -1055,7 +1465,8 @@ class _ProjectScrollItemState extends State<ProjectScrollItem> {
                             const SizedBox(height: 16),
                             Text(
                               widget.project.title,
-                              textAlign: _fromLeft ? TextAlign.left : TextAlign.right,
+                              textAlign:
+                                  _fromLeft ? TextAlign.left : TextAlign.right,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 36,
@@ -1067,7 +1478,8 @@ class _ProjectScrollItemState extends State<ProjectScrollItem> {
                             const SizedBox(height: 12),
                             Text(
                               widget.project.shortDesc,
-                              textAlign: _fromLeft ? TextAlign.left : TextAlign.right,
+                              textAlign:
+                                  _fromLeft ? TextAlign.left : TextAlign.right,
                               style: const TextStyle(
                                 color: Colors.white54,
                                 fontSize: 14,
@@ -1078,14 +1490,18 @@ class _ProjectScrollItemState extends State<ProjectScrollItem> {
                             Wrap(
                               spacing: 6,
                               runSpacing: 6,
-                              alignment: _fromLeft ? WrapAlignment.start : WrapAlignment.end,
+                              alignment: _fromLeft
+                                  ? WrapAlignment.start
+                                  : WrapAlignment.end,
                               children: widget.project.techStack
                                   .take(3)
                                   .map((t) => TechChip(t))
                                   .toList(),
                             ),
                             const SizedBox(height: 28),
-                            _ScrollViewButton(project: widget.project, alignRight: !_fromLeft),
+                            _ScrollViewButton(
+                                project: widget.project,
+                                alignRight: !_fromLeft),
                           ],
                         ),
                       ),
@@ -1123,7 +1539,8 @@ class _ScrollViewButtonState extends State<_ScrollViewButton> {
         onTap: () => Navigator.push(
           context,
           PageRouteBuilder(
-            pageBuilder: (_, __, ___) => ProjectDetailPage(project: widget.project),
+            pageBuilder: (_, __, ___) =>
+                ProjectDetailPage(project: widget.project),
             transitionsBuilder: (_, a, __, child) =>
                 FadeTransition(opacity: a, child: child),
           ),
@@ -1137,14 +1554,15 @@ class _ScrollViewButtonState extends State<_ScrollViewButton> {
               width: 1.5,
             ),
             borderRadius: BorderRadius.circular(10),
-            color: _hovered ? kCyan.withValues(alpha: 0.10) : Colors.transparent,
+            color:
+                _hovered ? kCyan.withValues(alpha: 0.10) : Colors.transparent,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (widget.alignRight) ...[
-                Icon(Icons.arrow_back, size: 13,
-                    color: _hovered ? kCyan : Colors.white54),
+                Icon(Icons.arrow_back,
+                    size: 13, color: _hovered ? kCyan : Colors.white54),
                 const SizedBox(width: 8),
               ],
               Text(
@@ -1158,8 +1576,8 @@ class _ScrollViewButtonState extends State<_ScrollViewButton> {
               ),
               if (!widget.alignRight) ...[
                 const SizedBox(width: 8),
-                Icon(Icons.arrow_forward, size: 13,
-                    color: _hovered ? kCyan : Colors.white54),
+                Icon(Icons.arrow_forward,
+                    size: 13, color: _hovered ? kCyan : Colors.white54),
               ],
             ],
           ),
